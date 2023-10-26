@@ -14,6 +14,10 @@
       <div><span class="text-xl p-2">Region: </span> <span class="text-2xl p-1">Buganda South</span> </div>
       <div><span class="text-xl p-2">LocalGovernment: </span> <span class="text-2xl p-1">Kira Municipality</span></div>
     </div>
+
+    <div class="flex justify-between">
+      <div><span class="text-xl p-2">Total Staff: </span> <span class="text-2xl p-1">{{dbStaffs.length}}</span> </div>
+    </div>
   </div>
 </section>
 
@@ -31,7 +35,7 @@
     </button>
   </div>
 
-  <a mat-raised-button [disabled]="isUploading" href="../assets/SampleSchoolTimetable.xlsx" color="primary"
+  <a mat-raised-button [disabled]="isUploading" href="../assets/Sample Primary School Timetable.xlsx" color="primary"
     [download]="school.name+' Timetable.xlsx'" matTooltip="Supported formats are csv and excel">
     <mat-icon>download</mat-icon>
     Download Timetable Template
@@ -55,7 +59,7 @@
 
           <thead>
             <tr>
-              <th class="border border-slate-600">Time</th>
+              <th class="border border-slate-600 w-36">Time</th>
               <th class="border border-slate-600">Monday</th>
               <th class="border border-slate-600">Tuesday</th>
               <th class="border border-slate-600">Wednesday</th>
@@ -64,66 +68,118 @@
             </tr>
           </thead>
 
-
-
           <tbody>
             <tr *ngFor="let row of timetable.rows" class="text-center">
-              <td class="border border-slate-200">{{row.TIME}}</td>
+              <td class="border border-slate-200 w-36">{{row.TIME}}</td>
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.MONDAY|valueSplitter:':').length>0 ?
-                    (row.MONDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.MONDAY|valueSplitter:':').length >= 1 ? (row.MONDAY|valueSplitter:':')[1]
-                    : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.MONDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg text-slate-500">
+                    <div *ngIf="(row.MONDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.TUESDAY|valueSplitter:':').length>0 ?
-                    (row.TUESDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.TUESDAY|valueSplitter:':').length >= 1 ?
-                    (row.TUESDAY|valueSplitter:':')[1] : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.TUESDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg text-slate-500">
+                    <div *ngIf="(row.TUESDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+              <td class="border border-slate-200">
+                <div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg text-slate-500">
+                    <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
 
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.WEDNESDAY|valueSplitter:':').length>0 ?
-                    (row.WEDNESDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.WEDNESDAY|valueSplitter:':').length >= 1 ?
-                    (row.WEDNESDAY|valueSplitter:':')[1] : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.THURSDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg text-slate-500">
+                    <div *ngIf="(row.THURSDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.THURSDAY|valueSplitter:':').length>0 ?
-                    (row.THURSDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.THURSDAY|valueSplitter:':').length >= 1 ?
-                    (row.THURSDAY|valueSplitter:':')[1] : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.FRIDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg text-slate-500">
+                    <div *ngIf="(row.FRIDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
-              <td class="border border-slate-200">
-                <div>
-                  <div class="font-bold text-xl">{{(row.FRIDAY|valueSplitter:':').length>0 ?
-                    (row.FRIDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.FRIDAY|valueSplitter:':').length >= 1 ? (row.FRIDAY|valueSplitter:':')[1]
-                    : ""}}</div>
-                </div>
-              </td>
 
             </tr>
-
-
           </tbody>
         </table>
       </div>
     </mat-tab>
 
-    <mat-tab [label]="school.name+ ' Timetables'"  *ngIf="timeTableExcels.length>0">
+    <mat-tab [label]="school.name+ ' Timetables'" *ngIf="timeTableExcels.length>0">
       <div id="pdfPage" class="mb-10" *ngFor="let timetable of timeTableExcels">
         <table class="border-separate border-spacing-2 border border-slate-400 w-full">
 
@@ -133,7 +189,7 @@
 
           <thead>
             <tr>
-              <th class="border border-slate-600">Time</th>
+              <th class="border border-slate-600 w-36">Time</th>
               <th class="border border-slate-600">Monday</th>
               <th class="border border-slate-600">Tuesday</th>
               <th class="border border-slate-600">Wednesday</th>
@@ -146,59 +202,123 @@
 
           <tbody>
             <tr *ngFor="let row of timetable.rows" class="text-center">
-              <td class="border border-slate-200">{{row.TIME}}</td>
+              <td class="border border-slate-200 w-36">{{row.TIME}}</td>
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.MONDAY|valueSplitter:':').length>0 ?
-                    (row.MONDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.MONDAY|valueSplitter:':').length >= 1 ? (row.MONDAY|valueSplitter:':')[1]
-                    : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.MONDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.MONDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.TUESDAY|valueSplitter:':').length>0 ?
-                    (row.TUESDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.TUESDAY|valueSplitter:':').length >= 1 ?
-                    (row.TUESDAY|valueSplitter:':')[1] : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.TUESDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.TUESDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+              <td class="border border-slate-200">
+                <div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
 
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.WEDNESDAY|valueSplitter:':').length>0 ?
-                    (row.WEDNESDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.WEDNESDAY|valueSplitter:':').length >= 1 ?
-                    (row.WEDNESDAY|valueSplitter:':')[1] : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.THURSDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.THURSDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
               <td class="border border-slate-200">
                 <div>
-                  <div class="font-bold text-xl">{{(row.THURSDAY|valueSplitter:':').length>0 ?
-                    (row.THURSDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.THURSDAY|valueSplitter:':').length >= 1 ?
-                    (row.THURSDAY|valueSplitter:':')[1] : ""}}</div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.FRIDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span *ngIf="getSubjectByCode(dbSubjects , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.FRIDAY|valueSplitter:':')[1] as name">
+                      <span *ngIf="getStaffByFullName(dbStaffs , name) as staff;else missingStaffView"> {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </td>
 
-              <td class="border border-slate-200">
-                <div>
-                  <div class="font-bold text-xl">{{(row.FRIDAY|valueSplitter:':').length>0 ?
-                    (row.FRIDAY|valueSplitter:':')[0] : ""}}</div>
-                  <div class="text-lg">{{(row.FRIDAY|valueSplitter:':').length >= 1 ? (row.FRIDAY|valueSplitter:':')[1]
-                    : ""}}</div>
-                </div>
-              </td>
 
             </tr>
-
-
           </tbody>
         </table>
       </div>
     </mat-tab>
   </mat-tab-group>
 </section>
+
+
+<!--display if no staff names matches-->
+<ng-template #missingStaffView>
+  <span class="text-red-500 p-2">*-*</span>
+</ng-template>
+
+<ng-template #missingSubjectView>
+  <span class="text-yellow-600 p-2">[-]</span>
+</ng-template>
