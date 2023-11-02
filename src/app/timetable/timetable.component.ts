@@ -50,6 +50,7 @@ export class TimetableComponent implements OnInit {
 
 
   isUploadingEvent(status: boolean) {
+    this.isUploading = status;
     // console.log('isUploadingEvent ', status)
     if (!status) {
       this.uploadControl.reset()
