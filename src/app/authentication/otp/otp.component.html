@@ -1,0 +1,16 @@
+
+
+<div class="flex h-full justify-center items-center">
+  <mat-card class="flex flex-col  W-1/2 p-8 space-y-4">
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading" ></mat-progress-bar>
+
+    <p>Please enter one time password (OTP) sent to your registered email/phone number</p>
+
+    <ng-otp-input  [formCtrl]="otpControl"  [config]="{length:5 , allowNumbersOnly:true}" class="flex justify-center items-center"></ng-otp-input>
+
+    <div class="flex justify-between">
+      <button mat-raised-button color="primary" (click)="resetOpt()" [disabled]="isLoading" >Reset/Resend</button>
+      <button mat-raised-button color="primary" (click)="verifyOpt()" [disabled]="otpControl.value.length != 5  || isLoading" >Submit</button>
+    </div>
+  </mat-card>
+</div>

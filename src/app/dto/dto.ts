@@ -1,15 +1,28 @@
+import { SchoolStaffWithSchool_DistrictDto } from "../school-filter/school-filter.service"
 
 
-
+export interface AcademicYear {
+  id: string
+  code: string
+  name: string
+  status: string
+  activationStatus: string
+  startDate: string
+  endDate: string
+}
 
 export interface AcademicTerm {id: string , term: string}
 export interface School {id: string,name: string,schoolLevel: string,schoolClasses?: SchoolClass[]}
 export interface SchoolClass {id: string,name: string,academicTerm?: AcademicTerm}
+
+/**
+ * @deprecated
+ */
 export interface SchoolStaff {id: string,firstName: string,lastName: string,school?: School}
-export interface Subject {id: string,name: string,code: string}
+export interface SchoolSubject {id: string,name: string,code: string}
 export interface SchoolTimeTableLesson{
-  id:string , lessonDay:string , schoolClass:SchoolClass,subject:Subject,startTime:string,
-  endTime:string,schoolStaff:SchoolStaff
+  id:string , lessonDay:string , schoolClass:SchoolClass,subject:SchoolSubject,startTime:string,
+  endTime:string,schoolStaff:SchoolStaffWithSchool_DistrictDto
 }
 
 export interface SchoolTimeTable {
@@ -33,13 +46,14 @@ export const DbStaffs: SchoolStaff[] = [
   { id: "staff6", firstName: "Nansubuga", lastName: "Hidayah Wanfadger Kyebatenda", school: SampleSchool },
 ]
 
-export const DbSubjects: Subject[] = [
+export const DbSubjects: SchoolSubject[] = [
   { id: "staff1", code:"SST", name: "social Studies"},
   { id: "staff2", code:"SCI", name: "science"},
   { id: "staff3", code:"MTC", name: "mathematics"},
   { id: "staff4", code:"ENG", name: "english"},
   { id: "staff5", code:"LIT I", name: "literacy I"},
   { id: "staff6", code:"LIT II", name: "literacy II"},
+  { id: "staff7", code:"ENG READ1", name: "ENG READ1"},
 ]
 
 

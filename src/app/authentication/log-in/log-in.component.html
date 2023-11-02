@@ -1,0 +1,129 @@
+<div class="flex h-full justify-center items-center ">
+  <div class="flex flex-col w-1/2 shadow-md p-8">
+    <div class="flex flex-col justify-center items-center gap-2">
+      <img src="/assets/Coat_of_arms_of_Uganda.svg (2).png" class="w-20 h-20" />
+      <div class="text-xl">MINISTRY OF EDUCATION AND SPORTS</div>
+      <div class="text-lg">TeLa System</div>
+    </div>
+
+    <form class="flex flex-col"  [formGroup]="formGroup" >
+      <mat-form-field  appearance="fill">
+        <mat-label>Email</mat-label>
+        <input type="email" matInput placeholder="youremail@gmail.com" formControlName="username">
+        <mat-icon matSuffix>mail</mat-icon>
+      </mat-form-field>
+
+
+      <mat-form-field  appearance="fill">
+        <mat-label>Password</mat-label>
+        <input type="password" matInput formControlName="password" >
+        <mat-icon matSuffix>password</mat-icon>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="login()" [disabled]="formGroup.invalid || isLoading">Login</button>
+    </form>
+
+
+
+  </div>
+</div>
+
+
+
+
+<!-- <div class="column-layout group">
+  <div class="column-layout group_1">
+    <div class="column-layout group_2">
+
+      <h6 class="content">
+        MINISTRY OF EDUCATION AND SPORTS
+      </h6>
+      <h5 class="content">
+        TeLa System
+      </h5>
+    </div>
+
+    <form class="column-layout group_3"  [formGroup]="formGroup" >
+      <igx-input-group type="border" class="input" displayDensity="compact">
+        <igx-prefix>
+          <igx-icon class="icon">
+            person
+          </igx-icon>
+        </igx-prefix>
+        <input type="text" placeholder="Username" igxInput formControlName="username" />
+        <label igxLabel>Username</label>
+      </igx-input-group>
+      <igx-input-group type="border" class="input" displayDensity="compact">
+        <igx-prefix>
+          <igx-icon class="icon">
+            lock
+          </igx-icon>
+        </igx-prefix>
+        <input type="password" placeholder="Password" igxInput formControlName="password" />
+        <label igxLabel>Password</label>
+      </igx-input-group>
+    </form>
+    <div class="row-layout group_4">
+      <p [igxToggleAction]="forgotPassword" class="text">
+        Forgot password
+      </p>
+
+      <button igxButton="flat" igxRipple class="button" (click)="login()" displayDensity="compact">
+        <igx-icon>
+          send
+        </igx-icon>
+        <span>Login</span>
+      </button>
+    </div>
+    <div class="column-layout group_4">
+      <p routerLink="/log-in/account-request" class="text">
+        If you don't have an account? SignUp
+      </p>
+
+
+      <igx-linear-bar [value]="100" [indeterminate]="true" *ngIf="isLoading" [textVisibility]="false">
+      </igx-linear-bar>
+
+    </div>
+  </div>
+  <igx-dialog [closeOnEscape]="true" #forgotPassword>
+    <igx-dialog-title>
+      <h5>
+        Get help Signing in TeLA
+      </h5>
+    </igx-dialog-title>
+    <ng-container>
+      <div class="column-layout group_5">
+        <div class="column-layout group_6">
+          <igx-input-group type="border" class="user-input">
+            <igx-prefix>
+              <igx-icon class="icon">
+                alternate_email
+              </igx-icon>
+            </igx-prefix>
+            <input type="email" placeholder="Enter your email address" [required]="true" igxInput />
+            <label igxLabel>Email address</label>
+          </igx-input-group>
+        </div>
+        <div class="column-layout group_6" *ngIf="showLoginErrorMessage">
+          <p class="igx-typography__body-2 text_1">
+            The email provided is incorrect or not registered
+          </p>
+        </div>
+        <div class="column-layout group_7">
+          <p class="igx-typography__body-2 text">
+            An email notification with a temporary password will be sent to this email.
+          </p>
+        </div>
+        <div class="row-layout group_8">
+          <button  mat-flat-button color="primary">
+            Cancel
+          </button>
+          <button mat-flat-button color="primary">
+            Submit
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </igx-dialog>
+</div> -->
