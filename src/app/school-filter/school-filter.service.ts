@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, retry } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AcademicTerm, AcademicYear, SchoolSubject } from '../dto/dto';
+import { AcademicTerm, AcademicYear, SchoolSubject, SchoolTimeTable } from '../dto/dto';
 
 @Injectable({
   providedIn: 'root'
@@ -41,11 +41,16 @@ export class SchoolFilterService {
   }
 
   getAllSubjects(params:HttpParams): Observable<ResponseDto<SchoolSubject[]>>{
-    return this._http.get<ResponseDto<SchoolSubject[]>>(`${environment.BASE_URL}/subjects/filter`, {params})
+    return this._http.get<ResponseDto<SchoolSubject[]>>(`${environment.BASE_URL}/subjects/filter`, {params}).pipe(retry(3))
   }
 
   searchStaff(params:HttpParams):Observable<ResponseDto<SchoolStaffWithSchool_DistrictDto[]>>{
-    return this._http.get<ResponseDto<SchoolStaffWithSchool_DistrictDto[]>>(`${environment.BASE_URL}/schoolStaffs/filter2`, {params:params})
+    return this._http.get<ResponseDto<SchoolStaffWithSchool_DistrictDto[]>>(`${environment.BASE_URL}/schoolStaffs/filter2`, {params:params}).pipe(retry(3))
+  }
+
+
+  uploadTimetable(schoolTimeTable:SchoolTimeTable):Observable<ResponseDto<string>>{
+    return this._http.post<ResponseDto<string>>(`${environment.BASE_URL}/timetables` , schoolTimeTable).pipe(retry(3))
   }
 }
 

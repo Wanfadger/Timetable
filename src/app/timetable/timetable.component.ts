@@ -1,4 +1,5 @@
-import { Subject } from 'rxjs';
+import { SchoolFilterService } from './../school-filter/school-filter.service';
+import { Subject, Subscription } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayOfWeek } from '@js-joda/core';
@@ -33,6 +34,7 @@ export class TimetableComponent implements OnInit {
 
   filteredSchoolDetails: FilteredSchoolDetails | null = null
 
+  constructor(private schoolFilterService:SchoolFilterService){}
 
   ngOnInit(): void {
     // console.log(this.getStaffByFullName(this.dbStaffs, "Galiwango Fahad"))
@@ -42,9 +44,6 @@ export class TimetableComponent implements OnInit {
   excelData(timeTableExcels: TimeTableExcel[]) {
     this.timeTableExcels = timeTableExcels
     // console.log('timeTableExcels ', timeTableExcels)
-
-
-
   }
 
 
@@ -239,7 +238,25 @@ export class TimetableComponent implements OnInit {
 
   saveTimetable(){
     console.log("timeTable")
-    console.log(this.convertExcelTimetableToTimetable(this.timeTableExcels))
+    const schoolTimetable:SchoolTimeTable|null = this.convertExcelTimetableToTimetable(this.timeTableExcels);
+
+    if(schoolTimetable){
+     this.isUploading = true;
+      const _$:Subscription =  this.schoolFilterService.uploadTimetable(schoolTimetable).subscribe({
+        next:response => {
+          this.isUploading = false;
+          console.log(response)
+          alert(response.data)
+        },
+        error:error => {
+          this.isUploading = false;
+        },
+        complete:() => _$.unsubscribe()
+      })
+    }
+
+    // console.log(this.convertExcelTimetableToTimetable(this.timeTableExcels))
+
   }
 
 }
