@@ -61,7 +61,7 @@ export class SchoolFilterComponent implements OnInit {
     this.getAllSubjects()
 
     this.schoolLevelControl.valueChanges.pipe(switchMap((value) => {
-      console.log(this.localGovernmentControl.value)
+    //  console.log(this.localGovernmentControl.value)
       this.filteredSchoolDetails = {... this.filteredSchoolDetails , schoolLevel:value}
         this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
       if(value == "" || !this.localGovernmentControl.value){
@@ -208,7 +208,7 @@ export class SchoolFilterComponent implements OnInit {
           if (res.status) {
             this.filteredSchoolDetails = {... this.filteredSchoolDetails , staffList:res.data}
             this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
-          console.log("staff " , res.data)
+          // console.log("staff " , res.data)
           }
         },
         error: (error) => {
@@ -291,7 +291,7 @@ export class SchoolFilterComponent implements OnInit {
       })
      ).subscribe({
       next:response => {
-        console.log("class response" , response)
+       // console.log("class response" , response)
         if(response){
           this.filteredSchoolDetails = {... this.filteredSchoolDetails , schoolClasses:response?.data.sort(this.sortFunction)||[]}
               this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
@@ -314,7 +314,7 @@ export class SchoolFilterComponent implements OnInit {
       })
      ).subscribe({
       next:response => {
-        console.log("class response" , response)
+        // console.log("class response" , response)
         if(response){
           this.filteredSchoolDetails = {... this.filteredSchoolDetails , schoolClasses:response?.data.sort(this.sortFunction) ||[]}
               this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
@@ -335,7 +335,9 @@ export class SchoolFilterComponent implements OnInit {
         if (res.status) {
           // console.log("Subjects ", res.data)
           // console.log(res.data.map(D => D.code))
-          this.filteredSchoolDetails = {... this.filteredSchoolDetails , subjects:res.data||[]}
+          const subs = res.data.filter(sub => sub.subjectClassification != null)
+          // console.log("Subjects ", subs)
+          this.filteredSchoolDetails = {... this.filteredSchoolDetails , subjects:subs||[]}
           this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
         }
       },

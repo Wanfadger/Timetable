@@ -1,17 +1,17 @@
 import { SchoolFilterService } from './../school-filter/school-filter.service';
-import { Subject, Subscription } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayOfWeek } from '@js-joda/core';
 import { TimeTableExcel, TimeTableRowExcel } from 'src/shared/timetable-uploader.directive';
 import {
-  School, SampleSchool, AcademicTerm, SchoolStaff, DbStaffs, DbSubjects, SchoolClass,
+  School, SampleSchool, AcademicTerm, SchoolClass,
   DbSchoolClass, SchoolTimeTable, SchoolTimeTableLesson, SchoolSubject
 } from '../dto/dto';
 import { FilteredSchoolDetails } from '../school-filter/school-filter.component';
-import { forEach } from 'lodash';
+import { Dictionary, groupBy } from 'lodash';
 import { SchoolStaffWithSchool_DistrictDto } from '../school-filter/school-filter.service';
 import { MatSelectChange } from '@angular/material/select';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-timetable',
@@ -24,22 +24,24 @@ export class TimetableComponent implements OnInit {
   academicTerm: AcademicTerm = AcademicTerm
   DayOfWeek = DayOfWeek
   isUploading: boolean = false
+
   uploadControl: FormControl = new FormControl()
 
   timeTableExcels: TimeTableExcel[] = []
-  // dbStaffs: SchoolStaff[] = DbStaffs
-  // dbSubjects: SchoolSubject[] = DbSubjects
   dbSchoolClass: SchoolClass[] = DbSchoolClass
 
 
   filteredSchoolDetails: FilteredSchoolDetails | null = null
+  invalidLessonCounts: { name: string, count: number }[] = []
 
-  constructor(private schoolFilterService:SchoolFilterService){}
+
+
+  constructor(private schoolFilterService: SchoolFilterService) { }
 
   ngOnInit(): void {
-    // console.log(this.getStaffByFullName(this.dbStaffs, "Galiwango Fahad"))
-
   }
+
+
 
   excelData(timeTableExcels: TimeTableExcel[]) {
     this.timeTableExcels = timeTableExcels
@@ -49,13 +51,12 @@ export class TimetableComponent implements OnInit {
 
 
   isUploadingEvent(status: boolean) {
+    // console.log('isUploadingEvent', status)
     this.isUploading = status;
-    // console.log('isUploadingEvent ', status)
     if (!status) {
       this.uploadControl.reset()
     }
   }
-
 
 
 
@@ -134,7 +135,7 @@ export class TimetableComponent implements OnInit {
     })
 
     const schoolTimeTable: SchoolTimeTable = {
-      id: "string",
+      id: '',
       school: this.school,
       academicTerm: this.academicTerm,
       timeTableLessons: lessons
@@ -164,31 +165,31 @@ export class TimetableComponent implements OnInit {
     console.log('onSubjectChange', event.value);
     console.log('SELECTED ROW', row);
 
-    const subject:SchoolSubject = event.value
+    const subject: SchoolSubject = event.value
 
     switch (day) {
       case DayOfWeek.MONDAY:
         // update monday subject
-        const monStaff:string = row.MONDAY.split(':')[1] // staff
+        const monStaff: string = row.MONDAY.split(':')[1] // staff
         row.MONDAY = `${subject.code}:${monStaff}`
         break;
       case DayOfWeek.TUESDAY:
-        const tueStaff:string = row.TUESDAY.split(':')[1] // staff
+        const tueStaff: string = row.TUESDAY.split(':')[1] // staff
         row.TUESDAY = `${subject.code}:${tueStaff}`
         break;
       case DayOfWeek.WEDNESDAY:
-        const wedStaff:string = row.WEDNESDAY.split(':')[1] // staff
+        const wedStaff: string = row.WEDNESDAY.split(':')[1] // staff
         row.WEDNESDAY = `${subject.code}:${wedStaff}`
         break;
       case DayOfWeek.THURSDAY:
-        const thurStaff:string = row.THURSDAY.split(':')[1] // staff
+        const thurStaff: string = row.THURSDAY.split(':')[1] // staff
         row.THURSDAY = `${subject.code}:${thurStaff}`
         break;
       case DayOfWeek.FRIDAY:
-        const friStaff:string = row.FRIDAY.split(':')[1] // staff
+        const friStaff: string = row.FRIDAY.split(':')[1] // staff
         row.FRIDAY = `${subject.code}:${friStaff}`
-            break;
-            default: console.log("Invalid DAY " , day.name())
+        break;
+      default: console.log("Invalid DAY ", day.name())
     }
 
     // // get original row
@@ -200,31 +201,31 @@ export class TimetableComponent implements OnInit {
     console.log('onSubjectChange', event.value);
     console.log('SELECTED ROW', row);
 
-    const staff:SchoolStaffWithSchool_DistrictDto = event.value
+    const staff: SchoolStaffWithSchool_DistrictDto = event.value
 
     switch (day) {
       case DayOfWeek.MONDAY:
         // update monday staff
-        const monSub:string = row.MONDAY.split(':')[0] // subject
+        const monSub: string = row.MONDAY.split(':')[0] // subject
         row.MONDAY = `${monSub}:${staff.firstName} ${staff.lastName}`
         break;
       case DayOfWeek.TUESDAY:
-        const tueSub:string = row.TUESDAY.split(':')[0] // subject
+        const tueSub: string = row.TUESDAY.split(':')[0] // subject
         row.TUESDAY = `${tueSub}:${staff.firstName} ${staff.lastName}`
         break;
       case DayOfWeek.WEDNESDAY:
-        const wedSub:string = row.WEDNESDAY.split(':')[0] // subject
+        const wedSub: string = row.WEDNESDAY.split(':')[0] // subject
         row.WEDNESDAY = `${wedSub}:${staff.firstName} ${staff.lastName}`
         break;
       case DayOfWeek.THURSDAY:
-        const thurSub:string = row.THURSDAY.split(':')[0] // subject
+        const thurSub: string = row.THURSDAY.split(':')[0] // subject
         row.THURSDAY = `${thurSub}:${staff.firstName} ${staff.lastName}`
         break;
       case DayOfWeek.FRIDAY:
-        const friSub:string = row.FRIDAY.split(':')[0] // subject
+        const friSub: string = row.FRIDAY.split(':')[0] // subject
         row.FRIDAY = `${friSub}:${staff.firstName} ${staff.lastName}`
-            break;
-            default: console.log("Invalid DAY " , day.name())
+        break;
+      default: console.log("Invalid DAY ", day.name())
     }
 
     // // get original row
@@ -232,31 +233,53 @@ export class TimetableComponent implements OnInit {
     // // update its subject value
   }
 
-  // selectedSchoolDetails(selectedSchoolDetails: SelectedSchoolDetails) {
-  //  console.log("selected school details " , selectedSchoolDetails);
-  //   }
 
-  saveTimetable(){
-    console.log("timeTable")
-    const schoolTimetable:SchoolTimeTable|null = this.convertExcelTimetableToTimetable(this.timeTableExcels);
+  saveTimetable() {
+    // console.log("timeTable")
+    const schoolTimetable: SchoolTimeTable | null = this.convertExcelTimetableToTimetable(this.timeTableExcels);
 
-    if(schoolTimetable){
-     this.isUploading = true;
-      const _$:Subscription =  this.schoolFilterService.uploadTimetable(schoolTimetable).subscribe({
-        next:response => {
+    if (schoolTimetable) {
+      const someInvalid: boolean = schoolTimetable.timeTableLessons.some(lesson => (lesson.schoolStaff == undefined || lesson.subject == undefined))
+      if (someInvalid) {
+        const invalidLessons: SchoolTimeTableLesson[] = schoolTimetable.timeTableLessons.filter(lesson => !(lesson.schoolStaff || lesson.subject))
+        const invalidByClass: Dictionary<SchoolTimeTableLesson[]> = groupBy(invalidLessons, (lesson) => lesson.schoolClass.name)
+
+        this.invalidLessonCounts = Object.keys(invalidByClass).map(className => ({ name: className, count: invalidByClass[className].length }))
+        // console.log(this.invalidLessonCounts)
+
+      } else {
+        // upload to server
+        console.log("IS ready to upload ", schoolTimetable)
+        // update class details
+        const lessons: SchoolTimeTableLesson[] = schoolTimetable?.timeTableLessons.map(l => {
+          const schoolClass: SchoolClass | undefined = this.filteredSchoolDetails?.schoolClasses.find(sl => sl.name === l.schoolClass.name)
+          if (schoolClass) {
+            l.schoolClass = { ...schoolClass }
+          }
+          return l
+        }) as []
+
+        schoolTimetable.timeTableLessons = lessons
+
+      }
+    }
+
+  }
+
+
+  uploadToServer(schoolTimetable:SchoolTimeTable){
+          this.isUploading = true;
+      const _$: Subscription = this.schoolFilterService.uploadTimetable(schoolTimetable).subscribe({
+        next: response => {
           this.isUploading = false;
           console.log(response)
           alert(response.data)
         },
-        error:error => {
+        error: error => {
           this.isUploading = false;
         },
-        complete:() => _$.unsubscribe()
+        complete: () => _$.unsubscribe()
       })
-    }
-
-    // console.log(this.convertExcelTimetableToTimetable(this.timeTableExcels))
-
   }
 
 }

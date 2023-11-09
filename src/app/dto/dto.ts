@@ -19,7 +19,7 @@ export interface SchoolClass {id: string,name: string,academicTerm?: AcademicTer
  * @deprecated
  */
 export interface SchoolStaff {id: string,firstName: string,lastName: string,school?: School}
-export interface SchoolSubject {id: string,name: string,code: string}
+export interface SchoolSubject {id: string,name: string,code: string , subjectClassification?:string}
 export interface SchoolTimeTableLesson{
   id:string , lessonDay:string , schoolClass:SchoolClass,subject:SchoolSubject,startTime:string,
   endTime:string,schoolStaff:SchoolStaffWithSchool_DistrictDto
