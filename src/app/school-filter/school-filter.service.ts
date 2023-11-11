@@ -50,7 +50,7 @@ export class SchoolFilterService {
 
 
   uploadTimetable(schoolTimeTable:SchoolTimeTable):Observable<ResponseDto<string>>{
-    return this._http.post<ResponseDto<string>>(`${environment.BASE_URL}/timetables` , schoolTimeTable).pipe(retry(3))
+    return this._http.post<ResponseDto<string>>(`${environment.BASE_URL}/timetables2` , schoolTimeTable).pipe(retry(3))
   }
 }
 

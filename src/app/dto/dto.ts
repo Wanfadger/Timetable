@@ -33,9 +33,9 @@ export interface SchoolTimeTable {
 }
 
 
-export const AcademicTerm: AcademicTerm = { id: "termIII", term: "Term III" }
+export const AcademicTerm: AcademicTerm = { id: "", term: "Term III" }
 
-export const SampleSchool: School = {id: "school1", name: "Sample Primary School", schoolLevel: "Primary"}
+export const SampleSchool: School = {id: "", name: "Sample Primary School", schoolLevel: "Primary"}
 
 export const DbStaffs: SchoolStaff[] = [
   { id: "staff1", firstName: "Galiwango", lastName: "Fahad", school: SampleSchool },

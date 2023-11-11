@@ -205,6 +205,7 @@ export class SchoolFilterComponent implements OnInit {
         return this.schoolFilterService.searchStaff(params);
       })).subscribe({
         next: (res) => {
+          console.log("class staff " , res)
           if (res.status) {
             this.filteredSchoolDetails = {... this.filteredSchoolDetails , staffList:res.data}
             this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
@@ -316,6 +317,7 @@ export class SchoolFilterComponent implements OnInit {
       next:response => {
         // console.log("class response" , response)
         if(response){
+          console.log("class response " , response)
           this.filteredSchoolDetails = {... this.filteredSchoolDetails , schoolClasses:response?.data.sort(this.sortFunction) ||[]}
               this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
         }
@@ -336,7 +338,7 @@ export class SchoolFilterComponent implements OnInit {
           // console.log("Subjects ", res.data)
           // console.log(res.data.map(D => D.code))
           const subs = res.data.filter(sub => sub.subjectClassification != null)
-          // console.log("Subjects ", subs)
+          console.log("Subjects ", subs)
           this.filteredSchoolDetails = {... this.filteredSchoolDetails , subjects:subs||[]}
           this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
         }

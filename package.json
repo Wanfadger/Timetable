@@ -25,6 +25,7 @@
     "jspdf-html2canvas": "^1.5.1",
     "lodash": "^4.17.21",
     "ng-otp-input": "^1.9.2",
+    "ngx-toastr": "^15.2.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",

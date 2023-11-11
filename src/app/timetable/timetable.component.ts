@@ -12,6 +12,8 @@ import { Dictionary, groupBy } from 'lodash';
 import { SchoolStaffWithSchool_DistrictDto } from '../school-filter/school-filter.service';
 import { MatSelectChange } from '@angular/material/select';
 import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-timetable',
@@ -36,7 +38,7 @@ export class TimetableComponent implements OnInit {
 
 
 
-  constructor(private schoolFilterService: SchoolFilterService) { }
+  constructor(private schoolFilterService: SchoolFilterService , private toastr: ToastrService) { }
 
   ngOnInit(): void {
   }
@@ -146,7 +148,7 @@ export class TimetableComponent implements OnInit {
 
   showStaffList() {
     if (this.filteredSchoolDetails?.staffList) {
-      alert(`${this.filteredSchoolDetails?.school?.name} staff list
+      this.toastr.info(`${this.filteredSchoolDetails?.school?.name} staff list
       ${this.filteredSchoolDetails?.staffList.map((staff, index) => `${index + 1} ${staff.firstName} ${staff.lastName}`).join("\n")}`)
 
       console.log(this.filteredSchoolDetails?.staffList.map((staff, index) => `${index + 1} ${staff.firstName} ${staff.lastName}`))
@@ -155,7 +157,7 @@ export class TimetableComponent implements OnInit {
 
   showSchoolClasses() {
     if (this.filteredSchoolDetails?.schoolClasses) {
-      alert(`${this.filteredSchoolDetails?.school?.name} staff list
+      this.toastr.info(`${this.filteredSchoolDetails?.school?.name} staff list
       ${this.filteredSchoolDetails?.schoolClasses.map((scchoolClass, index) => `${index + 1} ${scchoolClass.name}`).join("\n")}`)
     }
   }
@@ -240,9 +242,11 @@ export class TimetableComponent implements OnInit {
 
     if (schoolTimetable) {
       const someInvalid: boolean = schoolTimetable.timeTableLessons.some(lesson => (lesson.schoolStaff == undefined || lesson.subject == undefined))
-      if (someInvalid) {
-        const invalidLessons: SchoolTimeTableLesson[] = schoolTimetable.timeTableLessons.filter(lesson => !(lesson.schoolStaff || lesson.subject))
+      if (!someInvalid) {
+        const invalidLessons: SchoolTimeTableLesson[] = schoolTimetable.timeTableLessons.filter(lesson => (lesson.schoolStaff == undefined || lesson.subject == undefined))
         const invalidByClass: Dictionary<SchoolTimeTableLesson[]> = groupBy(invalidLessons, (lesson) => lesson.schoolClass.name)
+
+        console.log("invalidByClass " , invalidByClass)
 
         this.invalidLessonCounts = Object.keys(invalidByClass).map(className => ({ name: className, count: invalidByClass[className].length }))
         // console.log(this.invalidLessonCounts)
@@ -260,7 +264,9 @@ export class TimetableComponent implements OnInit {
         }) as []
 
         schoolTimetable.timeTableLessons = lessons
-
+        schoolTimetable.academicTerm = this.filteredSchoolDetails?.term as AcademicTerm
+        schoolTimetable.school = this.filteredSchoolDetails?.school as School
+        this.uploadToServer(schoolTimetable)
       }
     }
 
@@ -273,13 +279,19 @@ export class TimetableComponent implements OnInit {
         next: response => {
           this.isUploading = false;
           console.log(response)
-          alert(response.data)
+          this.toastr.success(response.data)
         },
-        error: error => {
+        error: (error:HttpErrorResponse) => {
           this.isUploading = false;
+        //  this.toastr.warning(error.error.error.message)
+          console.log("ERROR " , error.error.error.errorCode)
+          if(error.error.error.errorCode == 409){
+            this.toastr.warning(`Timetable of ${this.filteredSchoolDetails?.school?.name} for ${this.filteredSchoolDetails?.term?.term} Already exists  , for changes update`)
+          }
+
         },
         complete: () => _$.unsubscribe()
       })
   }
-
+// HttpErrorResponse
 }

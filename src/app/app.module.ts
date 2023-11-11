@@ -23,6 +23,7 @@ import { TimetableComponent } from './timetable/timetable.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthenticationInterceptor } from './authentication/authentication.interceptor';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatProgressBarModule,
     AuthenticationModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ToastrModule.forRoot()
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },],
   bootstrap: [AppComponent],
