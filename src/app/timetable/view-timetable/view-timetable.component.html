@@ -1,0 +1,42 @@
+
+<section id="section1" class="flex mt-10 justify-center items-center space-x-6">
+  <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
+  <div class="flex flex-col w-1/2  shadow-lg">
+    <div class="flex justify-between">
+      <div class="flex flex-col">
+        <div><span class="text-xl p-2">Academic Year:</span> <span
+            class="text-2xl p-1">{{(filteredSchoolDetails?.year?.name || 'Select Year') | titlecase}}</span> </div>
+        <div><span class="text-xl p-2">Academic Term:</span> <span
+            class="text-2xl p-1">{{(filteredSchoolDetails?.term?.term || 'Select Term') | titlecase}}</span> </div>
+        <div><span class="text-xl p-2">School Level :</span> <span
+            class="text-2xl p-1">{{(filteredSchoolDetails?.schoolLevel || 'Select School Level') | titlecase}}</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col">
+        <div><span class="text-xl p-2">Region: </span> <span class="text-2xl p-1">{{(filteredSchoolDetails?.region?.name
+            || 'Select Region') | titlecase}}</span> </div>
+        <div><span class="text-xl p-2">LocalGovernment: </span> <span
+            class="text-2xl p-1">{{(filteredSchoolDetails?.localGovernment?.name || 'Select LocalGovernment') |
+            titlecase}}</span></div>
+        <div><span class="text-xl p-2">School:</span> <span class="text-2xl p-1">{{(filteredSchoolDetails?.school?.name
+            || 'Select School') | titlecase}}</span></div>
+      </div>
+    </div>
+
+    <div class="flex justify-between">
+      <div class="space-x-8">
+        <span class="text-2xl p-1">Total Staff: {{(filteredSchoolDetails?.staffList?.length || 0)}}</span>
+        <span (click)="showStaffList()"><mat-icon class="mat-18">visibility</mat-icon></span>
+
+        <span class="text-2xl p-1">Total Classes: {{(filteredSchoolDetails?.schoolClasses?.length || 0)}}</span>
+        <span (click)="showSchoolClasses()" (click)="showSchoolClasses()"><mat-icon
+            class="mat-18">visibility</mat-icon></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="flex justify-center" *ngIf="filteredSchoolDetails as boolean">
+  <button mat-raised-button color="primary" (click)="loadTimetable()" [disabled]="isLoading" >Load</button>
+</div>
