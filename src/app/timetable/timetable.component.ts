@@ -14,6 +14,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-timetable',
@@ -38,7 +39,7 @@ export class TimetableComponent implements OnInit {
 
 
 
-  constructor(private schoolFilterService: SchoolFilterService , private toastr: ToastrService) { }
+  constructor(private schoolFilterService: SchoolFilterService , private toastr: ToastrService,private router:Router) { }
 
   ngOnInit(): void {
   }
@@ -287,6 +288,7 @@ export class TimetableComponent implements OnInit {
           console.log("ERROR " , error.error.error.errorCode)
           if(error.error.error.errorCode == 409){
             this.toastr.warning(`Timetable of ${this.filteredSchoolDetails?.school?.name} for ${this.filteredSchoolDetails?.term?.term} Already exists  , for changes update`)
+           this.router.navigate(["../ViewTimetable"])
           }
 
         },

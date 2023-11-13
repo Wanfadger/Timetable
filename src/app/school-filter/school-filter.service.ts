@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, retry } from 'rxjs';
+import { Observable, retry, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AcademicTerm, AcademicYear, SchoolSubject, SchoolTimeTable } from '../dto/dto';
 
@@ -8,6 +8,7 @@ import { AcademicTerm, AcademicYear, SchoolSubject, SchoolTimeTable } from '../d
   providedIn: 'root'
 })
 export class SchoolFilterService {
+
 
   constructor( private _http: HttpClient) { }
 
@@ -50,8 +51,13 @@ export class SchoolFilterService {
 
 
   uploadTimetable(schoolTimeTable:SchoolTimeTable):Observable<ResponseDto<string>>{
-    return this._http.post<ResponseDto<string>>(`${environment.BASE_URL}/timetables2` , schoolTimeTable).pipe(retry(3))
+    return this._http.post<ResponseDto<string>>(`${environment.BASE_URL}/timetable2` , schoolTimeTable).pipe(retry(3))
   }
+
+  loadTimetable(params: HttpParams):Observable<ResponseDto<DbTimetable>> {
+    return this._http.get<ResponseDto<DbTimetable>>(`${environment.BASE_URL}/timetable2` , {params}).pipe(retry(3))
+  }
+
 }
 
 
@@ -118,4 +124,19 @@ export interface SchoolStaffWithSchool_DistrictDto{
 	gender:string
 	nameAbbrev:string
   serviceStatus:string
+}
+
+export interface DbTimetable{
+  id:string
+  breakTime:string
+  lunchTime:string
+  lessons:{
+    id:string,
+    startTime:string,
+    endTime:string,
+    lessonDay:string,
+    schoolClass:{id:string , name:string},
+    subject:{id:string , name:string},
+    schoolStaff:{id:string , firstname:string, lastname:string}
+  }[]
 }

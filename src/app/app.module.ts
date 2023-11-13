@@ -24,6 +24,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthenticationInterceptor } from './authentication/authentication.interceptor';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ToastrModule } from 'ngx-toastr';
+import { ViewTimetableComponent } from './timetable/view-timetable/view-timetable.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ToastrModule } from 'ngx-toastr';
     TimetableExcelDirective,
     ValueSplitterPipe,
     SchoolFilterComponent,
-    TimetableComponent
+    TimetableComponent,
+    ViewTimetableComponent
   ],
   imports: [
     BrowserModule,
