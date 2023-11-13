@@ -243,7 +243,7 @@ export class TimetableComponent implements OnInit {
 
     if (schoolTimetable) {
       const someInvalid: boolean = schoolTimetable.timeTableLessons.some(lesson => (lesson.schoolStaff == undefined || lesson.subject == undefined))
-      if (!someInvalid) {
+      if (someInvalid) {
         const invalidLessons: SchoolTimeTableLesson[] = schoolTimetable.timeTableLessons.filter(lesson => (lesson.schoolStaff == undefined || lesson.subject == undefined))
         const invalidByClass: Dictionary<SchoolTimeTableLesson[]> = groupBy(invalidLessons, (lesson) => lesson.schoolClass.name)
 
