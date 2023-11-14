@@ -10,6 +10,7 @@ import { AcademicTerm, AcademicYear, SchoolSubject, SchoolTimeTable } from '../d
 export class SchoolFilterService {
 
 
+
   constructor( private _http: HttpClient) { }
 
    getRegions(params:HttpParams): Observable<ResponseDto<Region[]>>{
@@ -52,6 +53,10 @@ export class SchoolFilterService {
 
   uploadTimetable(schoolTimeTable:SchoolTimeTable):Observable<ResponseDto<string>>{
     return this._http.post<ResponseDto<string>>(`${environment.BASE_URL}/timetable2` , schoolTimeTable).pipe(retry(3))
+  }
+
+  updateSchoolClassTimetable(params: HttpParams , dbTimetableLesson:DbTimetableLesson[]) {
+    return this._http.put<ResponseDto<DbTimetable>>(`${environment.BASE_URL}/timetable2` , dbTimetableLesson ,{params}).pipe(retry(3))
   }
 
   loadTimetable(params: HttpParams):Observable<ResponseDto<DbTimetable>> {
@@ -133,13 +138,24 @@ export interface DbTimetable{
   lessons:DbTimetableLesson[]
 }
 
-
 export interface DbTimetableLesson{
   id:string,
   startTime:string,
   endTime:string,
   lessonDay:string,
-  schoolClass:{id:string , name:string},
-  subject:{id:string ,code:string, name:string},
-  schoolStaff:{id:string , firstname:string, lastname:string}
+  schoolClass:DbTimetableClass,
+  subject:DbTimetableSubject,
+  schoolStaff:DbTimetableStaff
+}
+
+export interface DbTimetableStaff{
+  id:string , firstName:string, lastName:string
+}
+
+export interface DbTimetableSubject{
+  id:string ,code:string, name:string
+}
+
+export interface DbTimetableClass{
+  id:string , name:string
 }

@@ -247,14 +247,14 @@ export class TimetableComponent implements OnInit {
         const invalidLessons: SchoolTimeTableLesson[] = schoolTimetable.timeTableLessons.filter(lesson => (lesson.schoolStaff == undefined || lesson.subject == undefined))
         const invalidByClass: Dictionary<SchoolTimeTableLesson[]> = groupBy(invalidLessons, (lesson) => lesson.schoolClass.name)
 
-        console.log("invalidByClass " , invalidByClass)
+        // console.log("invalidByClass " , invalidByClass)
 
         this.invalidLessonCounts = Object.keys(invalidByClass).map(className => ({ name: className, count: invalidByClass[className].length }))
         // console.log(this.invalidLessonCounts)
 
       } else {
         // upload to server
-        console.log("IS ready to upload ", schoolTimetable)
+        // console.log("IS ready to upload ", schoolTimetable)
         // update class details
         const lessons: SchoolTimeTableLesson[] = schoolTimetable?.timeTableLessons.map(l => {
           const schoolClass: SchoolClass | undefined = this.filteredSchoolDetails?.schoolClasses.find(sl => sl.name === l.schoolClass.name)
