@@ -25,6 +25,7 @@ import { AuthenticationInterceptor } from './authentication/authentication.inter
 import { MatNativeDateModule } from '@angular/material/core';
 import { ToastrModule } from 'ngx-toastr';
 import { ViewTimetableComponent } from './timetable/view-timetable/view-timetable.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ViewTimetableComponent } from './timetable/view-timetable/view-timetabl
     AuthenticationModule,
     MatFormFieldModule,
     MatInputModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    MatTooltipModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },],
   bootstrap: [AppComponent],

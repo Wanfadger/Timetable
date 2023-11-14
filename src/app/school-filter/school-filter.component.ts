@@ -205,7 +205,7 @@ export class SchoolFilterComponent implements OnInit {
         return this.schoolFilterService.searchStaff(params);
       })).subscribe({
         next: (res) => {
-          console.log("class staff " , res)
+          // console.log("class staff " , res)
           if (res.status) {
             this.filteredSchoolDetails = {... this.filteredSchoolDetails , staffList:res.data}
             this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
@@ -248,7 +248,7 @@ export class SchoolFilterComponent implements OnInit {
         next: (response) => {
           this.isLoadingTerms = false
           if (response.status) {
-            this.termList = response.data.sort(this.sortTerm);
+            this.termList = response.data.sort((a,b) =>  this.sortTerm(a,b,SortOrder.DESC));
             this.termControl.patchValue('')
           }
         },
@@ -317,7 +317,7 @@ export class SchoolFilterComponent implements OnInit {
       next:response => {
         // console.log("class response" , response)
         if(response){
-          console.log("class response " , response)
+          // console.log("class response " , response)
           this.filteredSchoolDetails = {... this.filteredSchoolDetails , schoolClasses:response?.data.sort(this.sortFunction) ||[]}
               this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
         }
@@ -338,7 +338,7 @@ export class SchoolFilterComponent implements OnInit {
           // console.log("Subjects ", res.data)
           // console.log(res.data.map(D => D.code))
           const subs = res.data.filter(sub => sub.subjectClassification != null)
-          console.log("Subjects ", subs)
+          // console.log("Subjects ", subs)
           this.filteredSchoolDetails = {... this.filteredSchoolDetails , subjects:subs||[]}
           this.SelectedSchoolDetailEvent.next(this.filteredSchoolDetails)
         }
@@ -358,7 +358,7 @@ export class SchoolFilterComponent implements OnInit {
         this.isLoadingYears = false
         if (res.status) {
           // console.log("YEARS ", res.data)
-          this.yearList = res.data.sort(this.sortFunction)
+          this.yearList = res.data.sort((a,b) =>  this.sortFunction(a,b,SortOrder.DESC))
           this.yearControl.patchValue('')
         }
       },
@@ -389,25 +389,49 @@ export class SchoolFilterComponent implements OnInit {
     })
   }
 
-  sortFunction(a:Region|District|School, b:Region|District|School):number{
-    if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) {
-      return -1;
+
+
+  sortFunction(a:Region|District|School, b:Region|District|School , sortOrder:SortOrder=SortOrder.ASC):number{
+    if(sortOrder == SortOrder.DESC){
+      if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) {
+        return 1;
+      }
+      if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) {
+        return -1;
+      }
+    }else{
+      if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) {
+        return 1;
+      }
     }
-    if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) {
-      return 1;
-    }
+
 
     // names must be equal
     return 0;
   }
 
-  sortTerm(a:AcademicTerm, b:AcademicTerm):number{
-    if (a.term.toLocaleLowerCase() < b.term.toLocaleLowerCase()) {
-      return -1;
+  sortTerm(a:AcademicTerm, b:AcademicTerm,sortOrder:SortOrder=SortOrder.ASC):number{
+
+    if(sortOrder == SortOrder.DESC){
+      if (a.term.toLocaleLowerCase() < b.term.toLocaleLowerCase()) {
+        return 1;
+      }
+      if (a.term.toLocaleLowerCase() > b.term.toLocaleLowerCase()) {
+        return -1;
+      }
+    }else{
+      if (a.term.toLocaleLowerCase() < b.term.toLocaleLowerCase()) {
+        return -1;
+      }
+      if (a.term.toLocaleLowerCase() > b.term.toLocaleLowerCase()) {
+        return 1;
+      }
     }
-    if (a.term.toLocaleLowerCase() > b.term.toLocaleLowerCase()) {
-      return 1;
-    }
+
+
 
     // names must be equal
     return 0;
@@ -424,6 +448,9 @@ export class SchoolFilterComponent implements OnInit {
   }
 }
 
+enum SortOrder{
+  ASC , DESC
+}
 
 export interface FilteredSchoolDetails{
   region:Region|null
