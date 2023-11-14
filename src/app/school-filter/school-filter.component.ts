@@ -248,7 +248,7 @@ export class SchoolFilterComponent implements OnInit {
         next: (response) => {
           this.isLoadingTerms = false
           if (response.status) {
-            this.termList = response.data.sort(this.sortTerm);
+            this.termList = response.data.sort((a,b) =>  this.sortTerm(a,b,SortOrder.DESC));
             this.termControl.patchValue('')
           }
         },
@@ -358,7 +358,7 @@ export class SchoolFilterComponent implements OnInit {
         this.isLoadingYears = false
         if (res.status) {
           // console.log("YEARS ", res.data)
-          this.yearList = res.data.sort(this.sortFunction)
+          this.yearList = res.data.sort((a,b) =>  this.sortFunction(a,b,SortOrder.DESC))
           this.yearControl.patchValue('')
         }
       },
@@ -389,25 +389,49 @@ export class SchoolFilterComponent implements OnInit {
     })
   }
 
-  sortFunction(a:Region|District|School, b:Region|District|School):number{
-    if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) {
-      return -1;
+
+
+  sortFunction(a:Region|District|School, b:Region|District|School , sortOrder:SortOrder=SortOrder.ASC):number{
+    if(sortOrder == SortOrder.DESC){
+      if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) {
+        return 1;
+      }
+      if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) {
+        return -1;
+      }
+    }else{
+      if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) {
+        return 1;
+      }
     }
-    if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) {
-      return 1;
-    }
+
 
     // names must be equal
     return 0;
   }
 
-  sortTerm(a:AcademicTerm, b:AcademicTerm):number{
-    if (a.term.toLocaleLowerCase() < b.term.toLocaleLowerCase()) {
-      return -1;
+  sortTerm(a:AcademicTerm, b:AcademicTerm,sortOrder:SortOrder=SortOrder.ASC):number{
+
+    if(sortOrder == SortOrder.DESC){
+      if (a.term.toLocaleLowerCase() < b.term.toLocaleLowerCase()) {
+        return 1;
+      }
+      if (a.term.toLocaleLowerCase() > b.term.toLocaleLowerCase()) {
+        return -1;
+      }
+    }else{
+      if (a.term.toLocaleLowerCase() < b.term.toLocaleLowerCase()) {
+        return -1;
+      }
+      if (a.term.toLocaleLowerCase() > b.term.toLocaleLowerCase()) {
+        return 1;
+      }
     }
-    if (a.term.toLocaleLowerCase() > b.term.toLocaleLowerCase()) {
-      return 1;
-    }
+
+
 
     // names must be equal
     return 0;
@@ -424,6 +448,9 @@ export class SchoolFilterComponent implements OnInit {
   }
 }
 
+enum SortOrder{
+  ASC , DESC
+}
 
 export interface FilteredSchoolDetails{
   region:Region|null

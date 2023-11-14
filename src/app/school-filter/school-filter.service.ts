@@ -130,13 +130,16 @@ export interface DbTimetable{
   id:string
   breakTime:string
   lunchTime:string
-  lessons:{
-    id:string,
-    startTime:string,
-    endTime:string,
-    lessonDay:string,
-    schoolClass:{id:string , name:string},
-    subject:{id:string , name:string},
-    schoolStaff:{id:string , firstname:string, lastname:string}
-  }[]
+  lessons:DbTimetableLesson[]
+}
+
+
+export interface DbTimetableLesson{
+  id:string,
+  startTime:string,
+  endTime:string,
+  lessonDay:string,
+  schoolClass:{id:string , name:string},
+  subject:{id:string ,code:string, name:string},
+  schoolStaff:{id:string , firstname:string, lastname:string}
 }
