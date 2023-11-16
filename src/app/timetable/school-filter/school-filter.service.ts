@@ -138,6 +138,26 @@ export interface DbTimetable{
   lessons:DbTimetableLesson[]
 }
 
+export interface NewDbTimetable{
+  school:string,
+  academicTerm:string,
+  breakTime:string
+  lunchTime:string
+  lessons:NewDbTimetableLesson[]
+}
+
+
+export interface NewDbTimetableLesson{
+  id:string|null,
+  startTime:string,
+  endTime:string,
+  lessonDay:string|null,
+  schoolClass:DbTimetableClass|null,
+  subject:DbTimetableSubject|null,
+  schoolStaff:DbTimetableStaff|null
+}
+
+
 export interface DbTimetableLesson{
   id:string,
   startTime:string,
