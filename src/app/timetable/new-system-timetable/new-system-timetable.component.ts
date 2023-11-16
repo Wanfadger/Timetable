@@ -11,6 +11,7 @@ import { LocalTime, DayOfWeek } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
 import { distinctUntilChanged } from 'rxjs';
 import { MatSelectChange } from '@angular/material/select';
+import { StartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
 
 @Component({
   selector: 'app-new-system-timetable',
@@ -19,13 +20,13 @@ import { MatSelectChange } from '@angular/material/select';
 })
 export class NewSystemTimetableComponent implements OnInit {
 
-
-
   filteredSchoolDetails: FilteredSchoolDetails | null = null
   startTimeControl: FormControl = new FormControl(LocalTime.of(8, 0).format(TelaTimetablePattern));
   endTimeControl: FormControl = new FormControl(LocalTime.of(17, 0).format(TelaTimetablePattern));
   durationControl: FormControl = new FormControl(40);
   DayOfWeek = DayOfWeek
+  startEndBreakLunchTime !: StartEndBreakLunchTime
+  isStartEndBreakLunchTimeInValid: boolean = false
 
 
   startEndTimeRanges: TimeRange[] = []
@@ -100,6 +101,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
 
+
   generateTimetablePeriods(startTime: LocalTime, endTime: LocalTime, duration: number) {
     const periods: TimeRange[] = []
     let startTimeString: string = startTime.format(TelaTimetablePattern)
@@ -118,7 +120,7 @@ export class NewSystemTimetableComponent implements OnInit {
   onStaffChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons.
-    find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleUpperCase() == dayOfWeek.name().toLocaleUpperCase()))
+      find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleUpperCase() == dayOfWeek.name().toLocaleUpperCase()))
     const staff: DbTimetableStaff = $event.value
 
     if (lesson) {
@@ -142,16 +144,16 @@ export class NewSystemTimetableComponent implements OnInit {
 
   }
 
-  getLesson(startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass):NewDbTimetableLesson|undefined {
+  getLesson(startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass): NewDbTimetableLesson | undefined {
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     return this.newTimetable.lessons
-    .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleUpperCase() == dayOfWeek.name().toLocaleUpperCase()))
+      .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleUpperCase() == dayOfWeek.name().toLocaleUpperCase()))
   }
 
   onSubjectChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons
-    .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleUpperCase() == dayOfWeek.name().toLocaleUpperCase()))
+      .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleUpperCase() == dayOfWeek.name().toLocaleUpperCase()))
     const subject: DbTimetableSubject = $event.value
 
     if (lesson) {

@@ -22,6 +22,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { UploadTimetableComponent } from './upload-timetable/upload-timetable.component';
+import { StartEndBreakLunchTimeComponent } from './start-end-break-lunch-time/start-end-break-lunch-time.component';
 
 
 
@@ -34,7 +35,8 @@ import { UploadTimetableComponent } from './upload-timetable/upload-timetable.co
     TimetableComponent,
     ViewTimetableComponent,
     NewSystemTimetableComponent,
-    UploadTimetableComponent
+    UploadTimetableComponent,
+    StartEndBreakLunchTimeComponent
   ],
   imports: [
     CommonModule , TimetableRoutingModule,

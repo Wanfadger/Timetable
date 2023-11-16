@@ -1,0 +1,49 @@
+
+<form [formGroup]="formGroup" class="flex space-x-2">
+
+  <mat-form-field  appearance="fill" class="w-36">
+    <mat-label>Start Time</mat-label>
+    <input type="time" matInput formControlName="startTime">
+    <mat-icon matSuffix>time</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field  appearance="fill" class="w-36">
+    <mat-label>End Time</mat-label>
+    <input type="time" matInput formControlName="endTime">
+    <mat-icon matSuffix>time</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field  appearance="fill" class="w-38">
+    <mat-label>Duration per lesson (mins)</mat-label>
+    <input type="number" matInput formControlName="duration">
+    <mat-icon matSuffix>period</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field  appearance="fill" class="w-36">
+    <mat-label>Break Start Time</mat-label>
+    <input type="time" matInput formControlName="breakStartTime">
+    <mat-icon matSuffix>time</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field  appearance="fill" class="w-36">
+    <mat-label>Break End Time</mat-label>
+    <input type="time" matInput formControlName="breakEndTime">
+    <mat-icon matSuffix>time</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field  appearance="fill" class="w-36">
+    <mat-label>Lunch Start Time</mat-label>
+    <input type="time" matInput formControlName="lunchStartTime">
+    <mat-icon matSuffix>time</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field  appearance="fill" class="w-36">
+    <mat-label>Lunch End Time</mat-label>
+    <input type="time" matInput formControlName="lunchEndTime">
+    <mat-icon matSuffix>time</mat-icon>
+  </mat-form-field>
+
+</form>
+
+
+
