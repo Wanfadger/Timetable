@@ -1,29 +1,23 @@
-import { SchoolFilterService } from './school-filter/school-filter.service';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { DayOfWeek } from '@js-joda/core';
-import { TimeTableExcel, TimeTableRowExcel } from 'src/shared/timetable-uploader.directive';
-import {
-  School, SampleSchool, AcademicTerm, SchoolClass,
-  DbSchoolClass, SchoolTimeTable, SchoolTimeTableLesson, SchoolSubject
-} from '../dto/dto';
-import { FilteredSchoolDetails } from './school-filter/school-filter.component';
-import { Dictionary, groupBy } from 'lodash';
-import { SchoolStaffWithSchool_DistrictDto } from './school-filter/school-filter.service';
 import { MatSelectChange } from '@angular/material/select';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { DayOfWeek } from '@js-joda/core';
+import { Dictionary, groupBy } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import {  Subscription } from 'rxjs';
+import { School, SampleSchool, AcademicTerm, SchoolClass, DbSchoolClass, SchoolSubject, SchoolTimeTable, SchoolTimeTableLesson } from 'src/app/dto/dto';
+import { FilteredSchoolDetails } from 'src/app/timetable/school-filter/school-filter.component';
+import { SchoolFilterService, SchoolStaffWithSchool_DistrictDto } from 'src/app/timetable/school-filter/school-filter.service';
+import { TimeTableExcel, TimeTableRowExcel } from 'src/shared/timetable-uploader.directive';
 
 @Component({
-  selector: 'app-timetable',
-  templateUrl: './timetable.component.html',
-  styleUrls: ['./timetable.component.scss']
+  selector: 'app-upload-timetable',
+  templateUrl: './upload-timetable.component.html',
+  styleUrls: ['./upload-timetable.component.scss']
 })
-export class TimetableComponent implements OnInit {
-
-
+export class UploadTimetableComponent implements OnInit {
   school: School = SampleSchool
   academicTerm: AcademicTerm = AcademicTerm
   DayOfWeek = DayOfWeek
@@ -40,14 +34,11 @@ export class TimetableComponent implements OnInit {
 
 
 
-  constructor(private schoolFilterService: SchoolFilterService , private toastr: ToastrService,private router:Router , private route: ActivatedRoute ) { }
+  constructor(private schoolFilterService: SchoolFilterService , private toastr: ToastrService,private router:Router) { }
 
   ngOnInit(): void {
   }
 
-  navigateRoute(relatievRoute: string) {
-   this.router.navigate([relatievRoute] , {relativeTo: this.route})
-    }
 
 
   excelData(timeTableExcels: TimeTableExcel[]) {

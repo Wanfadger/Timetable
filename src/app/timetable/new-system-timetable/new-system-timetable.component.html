@@ -1,0 +1,259 @@
+<section id="section1" class="flex mt-1 justify-center items-center ">
+  <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
+</section>
+
+
+<div class="flex justify-center">
+  <form class="flex space-x-4">
+    <div class="space-x-2">
+      <label for="startTime">Start Time</label>
+      <input type="time" class="form-input px-4 py-3 rounded-lg" id="startTime" [formControl]="startTimeControl">
+    </div>
+
+    <div class="space-x-2">
+      <label for="endTime">End Time</label>
+      <input type="time" class="form-input px-4 py-3 rounded-lg" id="endTime" [formControl]="endTimeControl">
+    </div>
+
+    <div>
+      <label for="duration">Duraion per lesson/min</label>
+      <input type="number" min="0" class="form-input px-4 py-3 rounded-lg" id="duration"
+        [formControl]="durationControl">
+    </div>
+
+    <button type="button" mat-raised-button color="primary" (click)="generateTimetable()">Generate</button>
+
+  </form>
+</div>
+
+<section id="table">
+  <table class="border-separate border-spacing-2 border border-slate-400 w-full">
+
+    <caption class="caption-top text-xl p-2">
+      {{'timetableClass'|titlecase}} TimeTable
+    </caption>
+
+    <thead>
+      <tr>
+        <th class="border border-slate-600 w-36">No.</th>
+        <th class="border border-slate-600 w-36">Time</th>
+        <th class="border border-slate-600">Monday</th>
+        <th class="border border-slate-600">Tuesday</th>
+        <th class="border border-slate-600">Wednesday</th>
+        <th class="border border-slate-600">Thursday</th>
+        <th class="border border-slate-600">Friday</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let startEndTimeRange of startEndTimeRanges ;index as i" class="text-center">
+        <td class="border border-slate-200 w-36">{{i+1}}</td>
+
+        <!-- there are many lessons with same time but different days-->
+        <td class="border border-slate-200">{{startEndTimeRange.startTime}}-{{startEndTimeRange.endTime}}</td>
+
+
+        <!--monday-->
+        <td class="border border-slate-200 px-1">
+          <div class="flex flex-col space-y-2">
+            <span>
+              <!-- {{tueSubj.value.code}} -->
+            </span>
+
+
+            <mat-form-field appearance="outline" style="font-size: 10px;">
+              <mat-label>Update Subject</mat-label>
+              <mat-select  (selectionChange)="onSubjectChange($event)">
+                <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject" >
+                 {{subject.code}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+
+          <div class="text-lg text-slate-500">
+            <div class="flex flex-col space-y-2">
+              <span>
+                <!-- {{tueStaff.value.firstName}} {{tueStaff.value.lastName}} -->
+              </span>
+
+
+              <mat-form-field appearance="outline" style="font-size: 10px;">
+                <mat-label>Select Teacher</mat-label>
+                <mat-select  (selectionChange)="onStaffChange($event)">
+                  <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
+                    {{staff.firstName}} {{staff.lastName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+          </div>
+
+        </td>
+
+        <!--tuesday-->
+        <td class="border border-slate-200 px-1">
+          <div class="flex flex-col space-y-2">
+            <span>
+              <!-- {{tueSubj.value.code}} -->
+            </span>
+
+
+            <mat-form-field appearance="outline" style="font-size: 10px;">
+              <mat-label>Update Subject</mat-label>
+              <mat-select  (selectionChange)="onSubjectChange($event)">
+                <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject" >
+                 {{subject.code}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+
+          <div class="text-lg text-slate-500">
+            <div class="flex flex-col space-y-2">
+              <span>
+                <!-- {{tueStaff.value.firstName}} {{tueStaff.value.lastName}} -->
+              </span>
+
+
+              <mat-form-field appearance="outline" style="font-size: 10px;">
+                <mat-label>Select Teacher</mat-label>
+                <mat-select  (selectionChange)="onStaffChange($event)">
+                  <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
+                    {{staff.firstName}} {{staff.lastName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+          </div>
+
+        </td>
+
+        <!--WEDNESDAY-->
+        <td class="border border-slate-200 px-1">
+          <div class="flex flex-col space-y-2">
+            <span>
+              <!-- {{tueSubj.value.code}} -->
+            </span>
+
+
+            <mat-form-field appearance="outline" style="font-size: 10px;">
+              <mat-label>Update Subject</mat-label>
+              <mat-select  (selectionChange)="onSubjectChange($event)">
+                <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject" >
+                 {{subject.code}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+
+          <div class="text-lg text-slate-500">
+            <div class="flex flex-col space-y-2">
+              <span>
+                <!-- {{tueStaff.value.firstName}} {{tueStaff.value.lastName}} -->
+              </span>
+
+
+              <mat-form-field appearance="outline" style="font-size: 10px;">
+                <mat-label>Select Teacher</mat-label>
+                <mat-select  (selectionChange)="onStaffChange($event)">
+                  <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
+                    {{staff.firstName}} {{staff.lastName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+          </div>
+
+        </td>
+
+        <!--THURSDAY-->
+        <td class="border border-slate-200 px-1">
+          <div class="flex flex-col space-y-2">
+            <span>
+              <!-- {{tueSubj.value.code}} -->
+            </span>
+
+
+            <mat-form-field appearance="outline" style="font-size: 10px;">
+              <mat-label>Update Subject</mat-label>
+              <mat-select  (selectionChange)="onSubjectChange($event)">
+                <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject" >
+                 {{subject.code}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+
+          <div class="text-lg text-slate-500">
+            <div class="flex flex-col space-y-2">
+              <span>
+                <!-- {{tueStaff.value.firstName}} {{tueStaff.value.lastName}} -->
+              </span>
+
+
+              <mat-form-field appearance="outline" style="font-size: 10px;">
+                <mat-label>Select Teacher</mat-label>
+                <mat-select  (selectionChange)="onStaffChange($event)">
+                  <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
+                    {{staff.firstName}} {{staff.lastName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+          </div>
+
+        </td>
+
+        <!--FRIDAY-->
+        <td class="border border-slate-200 px-1">
+          <div class="flex flex-col space-y-2">
+            <span>
+              <!-- {{tueSubj.value.code}} -->
+            </span>
+
+
+            <mat-form-field appearance="outline" style="font-size: 10px;">
+              <mat-label>Update Subject</mat-label>
+              <mat-select  (selectionChange)="onSubjectChange($event)">
+                <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject" >
+                 {{subject.code}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+
+          <div class="text-lg text-slate-500">
+            <div class="flex flex-col space-y-2">
+              <span>
+                <!-- {{tueStaff.value.firstName}} {{tueStaff.value.lastName}} -->
+              </span>
+
+
+              <mat-form-field appearance="outline" style="font-size: 10px;">
+                <mat-label>Select Teacher</mat-label>
+                <mat-select  (selectionChange)="onStaffChange($event)">
+                  <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
+                    {{staff.firstName}} {{staff.lastName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+          </div>
+
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+</section>

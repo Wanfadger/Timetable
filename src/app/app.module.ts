@@ -12,7 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ValueSplitterPipe } from './value-splitter.pipe';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select';
-import { SchoolFilterComponent } from './school-filter/school-filter.component';
+import { SchoolFilterComponent } from './timetable/school-filter/school-filter.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
@@ -26,36 +26,19 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ToastrModule } from 'ngx-toastr';
 import { ViewTimetableComponent } from './timetable/view-timetable/view-timetable.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { NewSystemTimetableComponent } from './timetable/new-system-timetable/new-system-timetable.component';
+import { TimetableModule } from './timetable/timetable.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ConvertHtmlToPdfDirective,
-    TimetableExcelDirective,
-    ValueSplitterPipe,
-    SchoolFilterComponent,
-    TimetableComponent,
-    ViewTimetableComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule,
     HttpClientModule,
-    MatTabsModule,
-    MatSelectModule,
-    MatAutocompleteModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatProgressBarModule,
-    AuthenticationModule,
-    MatFormFieldModule,
-    MatInputModule,
     ToastrModule.forRoot(),
-    MatTooltipModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },],
   bootstrap: [AppComponent],

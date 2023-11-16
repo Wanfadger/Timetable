@@ -6,8 +6,8 @@ import { DayOfWeek } from '@js-joda/core';
 import { Dictionary, groupBy, uniq } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { FilteredSchoolDetails } from 'src/app/school-filter/school-filter.component';
-import { DbTimetable, DbTimetableLesson, DbTimetableStaff, DbTimetableSubject, SchoolFilterService } from 'src/app/school-filter/school-filter.service';
+import { FilteredSchoolDetails } from 'src/app/timetable/school-filter/school-filter.component';
+import { DbTimetable, DbTimetableLesson, DbTimetableStaff, DbTimetableSubject, SchoolFilterService } from 'src/app/timetable/school-filter/school-filter.service';
 
 @Component({
   selector: 'app-view-timetable',
@@ -32,21 +32,7 @@ export class ViewTimetableComponent implements OnInit {
     }
 
 
-    showStaffList() {
-      if (this.filteredSchoolDetails?.staffList) {
-        this.toastr.info(`${this.filteredSchoolDetails?.school?.name} staff list
-        ${this.filteredSchoolDetails?.staffList.map((staff, index) => `${index + 1} ${staff.firstName} ${staff.lastName}`).join("\n")}`)
 
-        console.log(this.filteredSchoolDetails?.staffList.map((staff, index) => `${index + 1} ${staff.firstName} ${staff.lastName}`))
-      }
-    }
-
-    showSchoolClasses() {
-      if (this.filteredSchoolDetails?.schoolClasses) {
-        this.toastr.info(`${this.filteredSchoolDetails?.school?.name} staff list
-        ${this.filteredSchoolDetails?.schoolClasses.map((scchoolClass, index) => `${index + 1} ${scchoolClass.name}`).join("\n")}`)
-      }
-    }
     groupByClassName(dbTimetableLessons:DbTimetableLesson[]):Dictionary<DbTimetableLesson[]>|undefined{
      const dictionary:Dictionary<DbTimetableLesson[]> = groupBy(dbTimetableLessons , (dbTimetableLesson:DbTimetableLesson) => dbTimetableLesson.schoolClass.name)
 

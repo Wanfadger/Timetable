@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, retry, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AcademicTerm, AcademicYear, SchoolSubject, SchoolTimeTable } from '../dto/dto';
+import { AcademicTerm, AcademicYear, SchoolSubject, SchoolTimeTable } from '../../dto/dto';
 
 @Injectable({
   providedIn: 'root'

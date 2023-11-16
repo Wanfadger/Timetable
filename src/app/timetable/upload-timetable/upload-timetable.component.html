@@ -1,0 +1,478 @@
+<section id="section1" class="flex  justify-center items-center">
+  <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
+</section>
+
+<div class="flex justify-center items-center mt-1 space-x-4 p-2">
+  <div>
+
+    <input type="file"  class="w-0" #uploadField
+    (excelDataEvent)="excelData($event)"
+appTimetableExcelUploader
+(isUploadingEvent)="isUploadingEvent($event)"
+      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+       [formControl]="uploadControl" />
+
+
+    <button mat-raised-button [disabled]="isUploading ||
+     !filteredSchoolDetails?.region || !filteredSchoolDetails?.localGovernment || !filteredSchoolDetails?.year || !filteredSchoolDetails?.term
+    || !filteredSchoolDetails?.school || !filteredSchoolDetails?.schoolLevel" (click)="uploadField.click()"
+      cdkFocusInitial color="primary" matTooltip="select file to upload">
+      <mat-icon>upload_file</mat-icon>
+      Upload Timetable
+    </button>
+  </div>
+
+  <a mat-raised-button [disabled]="isUploading ||
+  !filteredSchoolDetails?.region || !filteredSchoolDetails?.localGovernment || !filteredSchoolDetails?.year || !filteredSchoolDetails?.term
+  || !filteredSchoolDetails?.school || !filteredSchoolDetails?.schoolLevel"
+    href="../../assets/School Timetable Template.xlsx" color="primary"
+    [download]="filteredSchoolDetails?.school?.name+' Timetable '+filteredSchoolDetails?.term?.term+' '+filteredSchoolDetails?.year?.name+'.xlsx'"
+    matTooltip="Supported formats are csv and excel">
+    <mat-icon>download</mat-icon>
+    Download Timetable Template
+  </a>
+
+  <button mat-raised-button color="accent" [disabled]="(timeTableExcels.length == 0)" (click)="saveTimetable()">Save
+    Timetable</button>
+
+</div>
+
+
+<!---missing-->
+<section class="my-1">
+  <div class=" flex w-1/2 mx-auto p-4 shadow-lg hover:ring-4 hover:ring-red-300">
+    <div>
+      <div class="text-lg p-1">Lessons with Missing (Subject or Teacher) !! </div>
+      <div class="flex space-x-3 ">
+        <div *ngFor="let invalidLessonCount of invalidLessonCounts" class="p-1 ring-2 ring-red-400">
+          <span>{{invalidLessonCount.name}}</span> : <span class="text-bold">({{invalidLessonCount.count}})</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="container mx-auto mt-8 mb-20 shadow-md">
+  <mat-progress-bar mode="indeterminate" *ngIf="isUploading" color="primary" class="py-2"></mat-progress-bar>
+  <div *ngIf="timeTableExcels.length <= 0">
+    <img src="../../assets/tt-image.png" alt="" srcset="" class="w-full">
+  </div>
+
+  <mat-tab-group mat-align-tabs="start">
+    <mat-tab [label]="timetable.schoolClass.name" *ngFor="let timetable of timeTableExcels">
+      <ng-template matTabContent>
+        <div id="pdfPage">
+          <table class="border-separate border-spacing-2 border border-slate-400 w-full">
+
+            <caption class="caption-top text-xl p-2">
+              {{timetable.schoolClass.name|titlecase}} TimeTable
+            </caption>
+
+            <thead>
+              <tr>
+                <th class="border border-slate-600 w-36">No.</th>
+                <th class="border border-slate-600 w-36">Time</th>
+                <th class="border border-slate-600">Monday</th>
+                <th class="border border-slate-600">Tuesday</th>
+                <th class="border border-slate-600">Wednesday</th>
+                <th class="border border-slate-600">Thursday</th>
+                <th class="border border-slate-600">Friday</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let row of timetable.rows;index as i" class="text-center">
+                <td class="border border-slate-200 w-36">{{i+1}}</td>
+                <td class="border border-slate-200 w-36">{{row.TIME}}</td>
+                <td class="border border-slate-200">
+                  <div>
+                    <div class="font-medium text-xl">
+                      <div *ngIf="(row.MONDAY|valueSplitter:':')[0] as subjectCode " class="space-x-4">
+                        <span
+                          *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                          {{subject.name|titlecase}}
+                        </span>
+
+                        <!--*ngIf="!getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject"-->
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Update Subject</mat-label>
+                          <mat-select name="food" (selectionChange)="onSubjectChange($event , row ,DayOfWeek.MONDAY)">
+                            <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
+                              {{subject.code}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="text-lg text-slate-500">
+                      <div *ngIf="(row.MONDAY|valueSplitter:':')[1] as name" class="space-x-4">
+                        <span
+                          *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[]  , name) as staff;else missingStaffView">
+                          {{staff.firstName+' '+staff.lastName}}
+                        </span>
+
+                        <!--*ngIf="!getStaffByFullName(filteredSchoolDetails?.staffList||[]  , name) as staff" hiddes staff input if staff is selected-->
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Teacher</mat-label>
+                          <mat-select name="food" (selectionChange)="onStaffChange($event , row ,DayOfWeek.MONDAY)">
+                            <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                              {{staff.firstName}} {{staff.lastName}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </td>
+
+                <td class="border border-slate-200">
+                  <div>
+                    <div class="font-medium text-xl">
+                      <div *ngIf="(row.TUESDAY|valueSplitter:':')[0] as subjectCode " class="space-x-4">
+                        <span
+                          *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                          {{subject.name|titlecase}}
+                        </span>
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                         >
+                          <mat-label>Update Subject</mat-label>
+                          <mat-select name="food" (selectionChange)="onSubjectChange($event , row ,DayOfWeek.TUESDAY)">
+                            <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
+                              {{subject.code}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="text-lg text-slate-500">
+                      <div *ngIf="(row.TUESDAY|valueSplitter:':')[1] as name" class="space-x-4">
+                        <span
+                          *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                          {{staff.firstName+' '+staff.lastName}}
+                        </span>
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Teacher</mat-label>
+                          <mat-select name="food" (selectionChange)="onStaffChange($event , row ,DayOfWeek.TUESDAY)">
+                            <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                              {{staff.firstName}} {{staff.lastName}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </td>
+
+                <td class="border border-slate-200">
+                  <div>
+                    <div class="font-medium text-xl">
+                      <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[0] as subjectCode " class="space-x-4">
+                        <span
+                          *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                          {{subject.name|titlecase}}
+                        </span>
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Subject</mat-label>
+                          <mat-select name="food" (selectionChange)="onSubjectChange($event , row ,DayOfWeek.WEDNESDAY)">
+                            <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
+                              {{subject.code}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="text-lg text-slate-500">
+                      <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[1] as name" class="space-x-4">
+                        <span
+                          *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                          {{staff.firstName+' '+staff.lastName}}
+                        </span>
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Teacher</mat-label>
+                          <mat-select name="food" (selectionChange)="onStaffChange($event , row ,DayOfWeek.WEDNESDAY)">
+                            <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                              {{staff.firstName}} {{staff.lastName}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                  </div>
+                </td>
+
+
+                <td class="border border-slate-200">
+                  <div>
+                    <div class="font-medium text-xl">
+                      <div *ngIf="(row.THURSDAY|valueSplitter:':')[0] as subjectCode " class="space-x-4">
+                        <span
+                          *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                          {{subject.name|titlecase}}
+                        </span>
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Subject</mat-label>
+                          <mat-select name="food" (selectionChange)="onSubjectChange($event , row ,DayOfWeek.THURSDAY)">
+                            <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
+                              {{subject.code}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="text-lg text-slate-500">
+                      <div *ngIf="(row.THURSDAY|valueSplitter:':')[1] as name">
+                        <span
+                          *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                          {{staff.firstName+' '+staff.lastName}}
+                        </span>
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Teacher</mat-label>
+                          <mat-select name="food" (selectionChange)="onStaffChange($event , row ,DayOfWeek.THURSDAY)">
+                            <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                              {{staff.firstName}} {{staff.lastName}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                  </div>
+                </td>
+
+                <td class="border border-slate-200">
+                  <div>
+                    <div class="font-medium text-xl">
+                      <div *ngIf="(row.FRIDAY|valueSplitter:':')[0] as subjectCode " class="space-x-4">
+                        <span
+                          *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                          {{subject.name|titlecase}}
+                        </span>
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Subject</mat-label>
+                          <mat-select name="food" (selectionChange)="onSubjectChange($event , row ,DayOfWeek.FRIDAY)">
+                            <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
+                              {{subject.code}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <div class="text-lg text-slate-500">
+                      <div *ngIf="(row.FRIDAY|valueSplitter:':')[1] as name">
+                        <span
+                          *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                          {{staff.firstName+' '+staff.lastName}}
+                        </span>
+
+
+                        <mat-form-field appearance="outline" style="font-size: 10px;"
+                          >
+                          <mat-label>Select Teacher</mat-label>
+                          <mat-select name="food" (selectionChange)="onStaffChange($event , row ,DayOfWeek.FRIDAY)">
+                            <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                              {{staff.firstName}} {{staff.lastName}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </td>
+
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+
+    </mat-tab>
+
+    <mat-tab [label]="school.name+ ' Timetables'" *ngIf="timeTableExcels.length>0">
+      <div id="pdfPage" class="mb-10" *ngFor="let timetable of timeTableExcels">
+        <table class="border-separate border-spacing-2 border border-slate-400 w-full">
+
+          <caption class="caption-top text-xl p-2">
+            {{timetable.schoolClass.name|titlecase}} TimeTable
+          </caption>
+
+          <thead>
+            <tr>
+              <th class="border border-slate-600 w-36">Time</th>
+              <th class="border border-slate-600">Monday</th>
+              <th class="border border-slate-600">Tuesday</th>
+              <th class="border border-slate-600">Wednesday</th>
+              <th class="border border-slate-600">Thursday</th>
+              <th class="border border-slate-600">Friday</th>
+            </tr>
+          </thead>
+
+
+
+          <tbody>
+            <tr *ngFor="let row of timetable.rows" class="text-center">
+              <td class="border border-slate-200 w-36">{{row.TIME}}</td>
+              <td class="border border-slate-200">
+                <div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.MONDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span
+                        *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.MONDAY|valueSplitter:':')[1] as name">
+                      <span
+                        *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                        {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+              <td class="border border-slate-200">
+                <div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.TUESDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span
+                        *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.TUESDAY|valueSplitter:':')[1] as name">
+                      <span
+                        *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                        {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+              <td class="border border-slate-200">
+                <div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span
+                        *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.WEDNESDAY|valueSplitter:':')[1] as name">
+                      <span
+                        *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                        {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+
+              <td class="border border-slate-200">
+                <div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.THURSDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span
+                        *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.THURSDAY|valueSplitter:':')[1] as name">
+                      <span
+                        *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                        {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+              <td class="border border-slate-200">
+                <div>
+                  <div class="font-medium text-xl">
+                    <div *ngIf="(row.FRIDAY|valueSplitter:':')[0] as subjectCode ">
+                      <span
+                        *ngIf="getSubjectByCode(filteredSchoolDetails?.subjects||[] , subjectCode)as subject;else missingSubjectView">
+                        {{subject.name|titlecase}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-lg ">
+                    <div *ngIf="(row.FRIDAY|valueSplitter:':')[1] as name">
+                      <span
+                        *ngIf="getStaffByFullName(filteredSchoolDetails?.staffList||[] , name) as staff;else missingStaffView">
+                        {{staff.firstName+' '+staff.lastName}}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+</section>
+
+
+<!--display if no staff names matches-->
+<ng-template #missingStaffView>
+  <span class="text-red-500 p-2">*-*</span>
+</ng-template>
+
+<ng-template #missingSubjectView>
+  <span class="text-yellow-600 p-2">[-]</span>
+</ng-template>
