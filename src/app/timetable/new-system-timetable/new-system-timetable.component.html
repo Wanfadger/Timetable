@@ -2,65 +2,67 @@
   <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
 </section>
 
-<div class="flex justify-between items-center mx-4">
-  <div class="flex space-x-2 items-center">
-    <app-start-end-break-lunch-time (StartEndBreakLunchTimeData)="startEndBreakLunchTime = $event"
-      (isInValid)="isStartEndBreakLunchTimeInValid = $event"></app-start-end-break-lunch-time>
 
-    <div>
-      <button type="button" mat-raised-button color="primary"
-      [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0 || isStartEndBreakLunchTimeInValid "
-      (click)="generateTimetable()">Generate</button>
-    </div>
-  </div>
-
-  <!-- actions-->
-  <div class="items-center">
-    <div class="flex space-x-6 justify-end mr-8">
-
-      <button mat-icon-button color="primary" [matTooltip]="'save timetableClass timetable changes'">
-        <mat-icon>check</mat-icon>
-      </button>
-
-      <button mat-icon-button color="primary" [matTooltip]="'edit timetableClass timetable'"  >
-        <mat-icon>edit</mat-icon>
-      </button>
-
-      <button mat-icon-button color="primary" [matTooltip]="'export timetableClass timetable'" >
-        <mat-icon>system_update_alt</mat-icon>
-      </button>
-    </div>
-  </div>
-
-  <!-- <form class="flex space-x-4">
-    <div class="space-x-2">
-      <label>Start Time</label>
-      <input type="time" class="form-input px-4 py-3 rounded-lg" id="startTime" [formControl]="startTimeControl">
-    </div>
-
-    <div class="space-x-2">
-      <label>End Time</label>
-      <input type="time" class="form-input px-4 py-3 rounded-lg" id="endTime" [formControl]="endTimeControl">
-    </div>
-
-    <div>
-      <label>Duraion per lesson/min</label>
-      <input type="number" min="0" class="form-input px-4 py-3 rounded-lg" id="duration"
-        [formControl]="durationControl">
-    </div>
-
-    <button type="button" mat-raised-button color="primary"
-      [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0"
-      (click)="generateTimetable()">Generate</button>
-
-  </form> -->
-</div>
 
 <section id="table">
 
   <mat-tab-group mat-align-tabs="start">
     <mat-tab [label]="schoolClass.name" *ngFor="let schoolClass of filteredSchoolDetails?.schoolClasses||[]">
       <ng-template matTabContent>
+        <div class="flex justify-between items-center mx-4 mt-1">
+          <div class="flex space-x-2 items-center">
+            <app-start-end-break-lunch-time (StartEndBreakLunchTimeData)="startEndBreakLunchTime = $event"
+              (isInValid)="isStartEndBreakLunchTimeInValid = $event"></app-start-end-break-lunch-time>
+
+            <div>
+              <button type="button" mat-raised-button color="primary"
+              [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0 || isStartEndBreakLunchTimeInValid "
+              (click)="generateTimetable()">Generate</button>
+            </div>
+          </div>
+
+          <!-- actions-->
+          <div class="items-center">
+            <div class="flex space-x-6 justify-end mr-8">
+
+              <button mat-icon-button color="primary" [matTooltip]="'save timetableClass timetable changes'">
+                <mat-icon>check</mat-icon>
+              </button>
+
+              <button mat-icon-button color="primary" [matTooltip]="'edit timetableClass timetable'"  >
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button mat-icon-button color="primary" [matTooltip]="'export timetableClass timetable'" >
+                <mat-icon>system_update_alt</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- <form class="flex space-x-4">
+            <div class="space-x-2">
+              <label>Start Time</label>
+              <input type="time" class="form-input px-4 py-3 rounded-lg" id="startTime" [formControl]="startTimeControl">
+            </div>
+
+            <div class="space-x-2">
+              <label>End Time</label>
+              <input type="time" class="form-input px-4 py-3 rounded-lg" id="endTime" [formControl]="endTimeControl">
+            </div>
+
+            <div>
+              <label>Duraion per lesson/min</label>
+              <input type="number" min="0" class="form-input px-4 py-3 rounded-lg" id="duration"
+                [formControl]="durationControl">
+            </div>
+
+            <button type="button" mat-raised-button color="primary"
+              [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0"
+              (click)="generateTimetable()">Generate</button>
+
+          </form> -->
+        </div>
+
         <table class="border-separate border-spacing-2 border border-slate-400 w-full">
 
           <caption class="caption-top text-xl p-2">

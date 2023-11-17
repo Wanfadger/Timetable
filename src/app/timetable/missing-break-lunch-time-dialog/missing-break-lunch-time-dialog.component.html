@@ -1,0 +1,25 @@
+<div class="text-lg">
+  Please Select Break and Lunch Time Period
+</div>
+
+<form class="flex  gap-2" [formGroup]="formGroup">
+  <mat-form-field appearance="fill">
+    <mat-label>Select Break Period</mat-label>
+    <mat-select formControlName="breakTime">
+      <mat-option  *ngFor="let timerange of getBreakTimes(data)">{{timerange.startTime}}-{{timerange.endTime}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Select Lunch Period</mat-label>
+    <mat-select formControlName="lunchTime">
+      <mat-option  *ngFor="let timerange of getLunchTimes(data)">{{timerange.startTime}}-{{timerange.endTime}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
+
+
+<div class="flex justify-center gap-8">
+  <button mat-raised-button color="primary" (click)="done()">Done</button>
+  <button mat-raised-button color="warn" (click)="close()">Close</button>
+</div>

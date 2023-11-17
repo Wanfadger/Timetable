@@ -12,6 +12,8 @@ import { distinctUntilChanged } from 'rxjs';
 import { MatSelectChange } from '@angular/material/select';
 import { StartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
 import { partition } from 'lodash';
+import { MatDialog } from '@angular/material/dialog';
+import { MissingBreakLunchTimeDialogComponent } from '../missing-break-lunch-time-dialog/missing-break-lunch-time-dialog.component';
 
 @Component({
   selector: 'app-new-system-timetable',
@@ -26,7 +28,7 @@ export class NewSystemTimetableComponent implements OnInit {
   durationControl: FormControl = new FormControl(40);
   DayOfWeek = DayOfWeek
   startEndBreakLunchTime !: StartEndBreakLunchTime
-  isStartEndBreakLunchTimeInValid: boolean = false
+  isStartEndBreakLunchTimeInValid: boolean = true
 
 
   startEndTimeRanges: TimeRange[] = []
@@ -41,13 +43,11 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
 
-  constructor(private router: Router, private toastr: ToastrService, private schoolFilterService: SchoolFilterService) { }
+  constructor(private router: Router, private toastr: ToastrService, private schoolFilterService: SchoolFilterService,public dialog: MatDialog) { }
 
   ngOnInit(): void {
 
     // this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.of(8, 0), LocalTime.of(17, 0), 40)
-
-
 
     this.startTimeControl.valueChanges
       .pipe(distinctUntilChanged())
@@ -103,7 +103,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
   generateTimetablePeriods(startTime: LocalTime, endTime: LocalTime, duration: number) {
-    const periods: TimeRange[] = []
+    let periods: TimeRange[] = []
 
 
     let startTimeString: string = startTime.format(TelaTimetablePattern)
@@ -111,20 +111,35 @@ export class NewSystemTimetableComponent implements OnInit {
       let timerange: TimeRange = { startTime: LocalTime.parse(startTimeString), endTime: LocalTime.now() } // set start time
       startTimeString = LocalTime.parse(startTimeString).plusMinutes(duration).format(TelaTimetablePattern)
       timerange.endTime = LocalTime.parse(startTimeString) // set end time
-      //  console.log(startTimeString)
       periods.push(timerange)
     }
-  //  console.log(this.startEndBreakLunchTime)
-  //  console.log('periods b4 ' , periods)
-  //  const periods = periods.filter(period => ((period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.breakStartTime , TelaTimetablePattern)))
-  //  || (period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime)))))
+
    const parrtions:[TimeRange[] , TimeRange[]] =  partition(periods , period => ((period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.breakStartTime , TelaTimetablePattern)))
    || (period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime)))) )
 
-   console.log('lunck '+LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime))
-   console.log('Break periods ' , parrtions[0])
-   console.log('lesson ' , parrtions[1] )
+   if (parrtions[0].length <= 0){
+    let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent , {disableClose: true , data:periods});
+
+    dialogRef.afterClosed().subscribe((result:{b:TimeRange , l:TimeRange}) => {
+      console.log(`Dialog result: ${result}`); // Pizza!
+      if(result){
+        periods =  periods.filter(ttr => !(ttr== result.b || ttr == result.l))
+      }else{
+        periods = []
+      }
+    });
+
+
+    return periods
+
+   }else{
     return parrtions[1]
+   }
+
+  //  console.log('lunck '+LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime))
+  //  console.log('Break periods ' , parrtions[0])
+  //  console.log('lesson ' , parrtions[1] )
+
   }
 
 
@@ -192,7 +207,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 }
 
-interface TimeRange {
+export interface TimeRange {
   startTime: LocalTime
   endTime: LocalTime
 }
