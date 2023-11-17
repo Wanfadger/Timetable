@@ -23,8 +23,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { UploadTimetableComponent } from './upload-timetable/upload-timetable.component';
 import { StartEndBreakLunchTimeComponent } from './start-end-break-lunch-time/start-end-break-lunch-time.component';
+import { MissingBreakLunchTimeDialogComponent } from './missing-break-lunch-time-dialog/missing-break-lunch-time-dialog.component';
 
-
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { StartEndBreakLunchTimeComponent } from './start-end-break-lunch-time/st
     ViewTimetableComponent,
     NewSystemTimetableComponent,
     UploadTimetableComponent,
-    StartEndBreakLunchTimeComponent
+    StartEndBreakLunchTimeComponent,
+    MissingBreakLunchTimeDialogComponent
   ],
   imports: [
     CommonModule , TimetableRoutingModule,
@@ -53,6 +55,7 @@ import { StartEndBreakLunchTimeComponent } from './start-end-break-lunch-time/st
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
+    MatDialogModule
   ]
 })
 export class TimetableModule { }
