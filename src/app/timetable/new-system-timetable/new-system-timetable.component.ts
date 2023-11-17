@@ -1,17 +1,17 @@
-import { DbSchoolClass } from 'src/app/dto/dto';
-import { DbTimetableLesson, DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson } from 'src/app/timetable/school-filter/school-filter.service';
+import { DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson } from 'src/app/timetable/school-filter/school-filter.service';
 import { DbTimetableClass } from './../school-filter/school-filter.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FilteredSchoolDetails } from '../school-filter/school-filter.component';
-import { DbTimetable, NewDbTimetable, SchoolFilterService } from '../school-filter/school-filter.service';
+import { NewDbTimetable, SchoolFilterService } from '../school-filter/school-filter.service';
 import { FormControl } from '@angular/forms';
 import { LocalTime, DayOfWeek } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
 import { distinctUntilChanged } from 'rxjs';
 import { MatSelectChange } from '@angular/material/select';
 import { StartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
+import { partition } from 'lodash';
 
 @Component({
   selector: 'app-new-system-timetable',
@@ -104,6 +104,8 @@ export class NewSystemTimetableComponent implements OnInit {
 
   generateTimetablePeriods(startTime: LocalTime, endTime: LocalTime, duration: number) {
     const periods: TimeRange[] = []
+
+
     let startTimeString: string = startTime.format(TelaTimetablePattern)
     while (LocalTime.parse(startTimeString).isBefore(endTime) || LocalTime.parse(startTimeString).equals(endTime)) {
       let timerange: TimeRange = { startTime: LocalTime.parse(startTimeString), endTime: LocalTime.now() } // set start time
@@ -112,8 +114,17 @@ export class NewSystemTimetableComponent implements OnInit {
       //  console.log(startTimeString)
       periods.push(timerange)
     }
+  //  console.log(this.startEndBreakLunchTime)
+  //  console.log('periods b4 ' , periods)
+  //  const periods = periods.filter(period => ((period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.breakStartTime , TelaTimetablePattern)))
+  //  || (period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime)))))
+   const parrtions:[TimeRange[] , TimeRange[]] =  partition(periods , period => ((period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.breakStartTime , TelaTimetablePattern)))
+   || (period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime)))) )
 
-    return periods
+   console.log('lunck '+LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime))
+   console.log('Break periods ' , parrtions[0])
+   console.log('lesson ' , parrtions[1] )
+    return parrtions[1]
   }
 
 
