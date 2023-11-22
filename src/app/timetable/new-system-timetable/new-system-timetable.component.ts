@@ -5,15 +5,14 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FilteredSchoolDetails } from '../school-filter/school-filter.component';
 import { NewDbTimetable, SchoolFilterService } from '../school-filter/school-filter.service';
-import { FormControl } from '@angular/forms';
 import { LocalTime, DayOfWeek } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
-import { distinctUntilChanged } from 'rxjs';
 import { MatSelectChange } from '@angular/material/select';
 import { StartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
-import { partition } from 'lodash';
+import { Dictionary, groupBy, partition } from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
 import { MissingBreakLunchTimeDialogComponent } from '../missing-break-lunch-time-dialog/missing-break-lunch-time-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-new-system-timetable',
@@ -22,20 +21,23 @@ import { MissingBreakLunchTimeDialogComponent } from '../missing-break-lunch-tim
 })
 export class NewSystemTimetableComponent implements OnInit {
 
+
   filteredSchoolDetails: FilteredSchoolDetails | null = null
-  startTimeControl: FormControl = new FormControl(LocalTime.of(8, 0).format(TelaTimetablePattern));
-  endTimeControl: FormControl = new FormControl(LocalTime.of(17, 0).format(TelaTimetablePattern));
-  durationControl: FormControl = new FormControl(40);
+  // startTimeControl: FormControl = new FormControl(LocalTime.of(8, 0).format(TelaTimetablePattern));
+  // endTimeControl: FormControl = new FormControl(LocalTime.of(17, 0).format(TelaTimetablePattern));
+  // durationControl: FormControl = new FormControl(null);
   DayOfWeek = DayOfWeek
   startEndBreakLunchTime !: StartEndBreakLunchTime
   isStartEndBreakLunchTimeInValid: boolean = true
+  isSaving: boolean = false
 
 
   startEndTimeRanges: TimeRange[] = []
 
+
   newTimetable: NewDbTimetable = {
-    school: "",
-    academicTerm: "",
+    school: { id: "" },
+    academicTerm: { id: "" },
     breakTime: "string",
     lunchTime: "string",
     lessons: []
@@ -43,63 +45,63 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
 
-  constructor(private router: Router, private toastr: ToastrService, private schoolFilterService: SchoolFilterService,public dialog: MatDialog) { }
+  constructor(private router: Router, private toastr: ToastrService, private schoolFilterService: SchoolFilterService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
 
     // this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.of(8, 0), LocalTime.of(17, 0), 40)
 
-    this.startTimeControl.valueChanges
-      .pipe(distinctUntilChanged())
-      .subscribe(value => {
-        const startTime: LocalTime = LocalTime.parse(value)
-        const endTime: LocalTime = LocalTime.parse(this.endTimeControl.value)
-        if (startTime.isAfter(endTime)) {
-          this.toastr.warning("Start time cannot be greater than end time")
-          this.startTimeControl.patchValue(LocalTime.of(8, 0).format(TelaTimetablePattern))
-          return
-        }
+    // this.startTimeControl.valueChanges
+    //   .pipe(distinctUntilChanged())
+    //   .subscribe(value => {
+    //     const startTime: LocalTime = LocalTime.parse(value)
+    //     const endTime: LocalTime = LocalTime.parse(this.endTimeControl.value)
+    //     if (startTime.isAfter(endTime)) {
+    //       this.toastr.warning("Start time cannot be greater than end time")
+    //       this.startTimeControl.patchValue(LocalTime.of(8, 0).format(TelaTimetablePattern))
+    //       return
+    //     }
 
-        //  this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, this.durationControl.value)
-        //  console.log(this.startEndRanges)
-      })
+    //     //  this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, this.durationControl.value)
+    //     //  console.log(this.startEndRanges)
+    //   })
 
 
-    this.endTimeControl.valueChanges
-      .pipe(distinctUntilChanged())
-      .subscribe(value => {
-        const endTime: LocalTime = LocalTime.parse(value)
-        const startTime: LocalTime = LocalTime.parse(this.startTimeControl.value)
-        if (endTime.isBefore(startTime)) {
-          this.toastr.warning("End time cannot be before start time")
-          this.startTimeControl.patchValue(LocalTime.of(17, 0).format(TelaTimetablePattern))
-          return
-        }
-        // this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, this.durationControl.value)
-        //  console.log(this.startEndRanges)
-      })
+    // this.endTimeControl.valueChanges
+    //   .pipe(distinctUntilChanged())
+    //   .subscribe(value => {
+    //     const endTime: LocalTime = LocalTime.parse(value)
+    //     const startTime: LocalTime = LocalTime.parse(this.startTimeControl.value)
+    //     if (endTime.isBefore(startTime)) {
+    //       this.toastr.warning("End time cannot be before start time")
+    //       this.startTimeControl.patchValue(LocalTime.of(17, 0).format(TelaTimetablePattern))
+    //       return
+    //     }
+    //     // this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, this.durationControl.value)
+    //     //  console.log(this.startEndRanges)
+    //   })
 
-    this.durationControl.valueChanges
-      .pipe(distinctUntilChanged())
-      .subscribe(duration => {
-        const endTime: LocalTime = LocalTime.parse(this.endTimeControl.value)
-        const startTime: LocalTime = LocalTime.parse(this.startTimeControl.value)
-        if (endTime.isBefore(startTime)) {
-          this.toastr.warning("End time cannot be before start time")
-          this.startTimeControl.patchValue(LocalTime.of(17, 0).format(TelaTimetablePattern))
-          return
-        }
-        //this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, duration)
-        //  console.log(this.startEndRanges)
-      })
+    // this.durationControl.valueChanges
+    //   .pipe(distinctUntilChanged())
+    //   .subscribe(duration => {
+    //     const endTime: LocalTime = LocalTime.parse(this.endTimeControl.value)
+    //     const startTime: LocalTime = LocalTime.parse(this.startTimeControl.value)
+    //     if (endTime.isBefore(startTime)) {
+    //       this.toastr.warning("End time cannot be before start time")
+    //       this.startTimeControl.patchValue(LocalTime.of(17, 0).format(TelaTimetablePattern))
+    //       return
+    //     }
+    //     //this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, duration)
+    //     //  console.log(this.startEndRanges)
+    //   })
 
   }
 
   generateTimetable() {
-    this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.startTimeControl.value), LocalTime.parse(this.endTimeControl.value), this.durationControl.value)
+      console.log('s ' , this.startEndBreakLunchTime.startTime  , ' e ' , this.startEndBreakLunchTime.endTime)
+    this.startEndTimeRanges = this.generateTimetablePeriods(this.startEndBreakLunchTime.startTime as LocalTime, this.startEndBreakLunchTime.endTime as LocalTime,
+      this.startEndBreakLunchTime.duration)
   }
-
-
 
 
   generateTimetablePeriods(startTime: LocalTime, endTime: LocalTime, duration: number) {
@@ -114,31 +116,31 @@ export class NewSystemTimetableComponent implements OnInit {
       periods.push(timerange)
     }
 
-   const parrtions:[TimeRange[] , TimeRange[]] =  partition(periods , period => ((period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.breakStartTime , TelaTimetablePattern)))
-   || (period.startTime.equals(LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime)))) )
+    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => ((period.startTime.equals(this.startEndBreakLunchTime.breakStartTime))
+      || (period.startTime.equals(this.startEndBreakLunchTime.lunchStartTime))))
 
-   if (parrtions[0].length <= 0){
-    let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent , {disableClose: true , data:periods});
+    if (parrtions[0].length <= 0) {
+      let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent, { disableClose: true, data: periods });
 
-    dialogRef.afterClosed().subscribe((result:{b:TimeRange , l:TimeRange}) => {
-      console.log(`Dialog result: ${result}`); // Pizza!
-      if(result){
-        periods =  periods.filter(ttr => !(ttr== result.b || ttr == result.l))
-      }else{
-        periods = []
-      }
-    });
+      dialogRef.afterClosed().subscribe((result: { b: TimeRange, l: TimeRange }) => {
+        console.log('Dialog result:', result); // Pizza!
+        if (result) {
+          periods = periods.filter(ttr => !(ttr == result.b || ttr == result.l))
+        } else {
+          periods = []
+        }
+      });
 
 
-    return periods
+      return periods
 
-   }else{
-    return parrtions[1]
-   }
+    } else {
+      return parrtions[1]
+    }
 
-  //  console.log('lunck '+LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime))
-  //  console.log('Break periods ' , parrtions[0])
-  //  console.log('lesson ' , parrtions[1] )
+    //  console.log('lunck '+LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime))
+    //  console.log('Break periods ' , parrtions[0])
+    //  console.log('lesson ' , parrtions[1] )
 
   }
 
@@ -203,6 +205,40 @@ export class NewSystemTimetableComponent implements OnInit {
   }
 
 
+  saveUpdateClassTimetable() {
+    console.log('this.newTimetable ', this.newTimetable)
+    if (confirm(`Are you sure you want to save this class timetable`)) {
+
+      const someInvalid: boolean = this.newTimetable.lessons.some(lesson => (lesson.schoolStaff == null || lesson.subject == null))
+
+      if(!(this.newTimetable.lessons.length == 0 || this.newTimetable.lessons.length < (this.startEndTimeRanges.length * 5)) ){
+        this.toastr.success('Timetable lessons is missing')
+      }else{
+          // upload to server
+          console.log('No ')
+
+          this.newTimetable.academicTerm = { id: this.filteredSchoolDetails?.term?.id as string }
+          this.newTimetable.school = { id: this.filteredSchoolDetails?.school?.id as string }
+
+          console.log("IS ready to upload ", this.newTimetable)
+          // update class details
+
+          this.isSaving = true
+          const _$:Subscription = this.schoolFilterService.saveUpdateClassTimetable(this.newTimetable).subscribe({
+           next:response => {
+             this.isSaving = false
+             this.toastr.success(response.data)
+           },
+           error: error => {
+             this.isSaving = false
+            console.log(error)
+           },
+           complete: () => _$.unsubscribe()
+          })
+        }
+      }
+
+  }
 
 
 }

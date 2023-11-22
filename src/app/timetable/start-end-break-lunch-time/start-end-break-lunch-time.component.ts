@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalTime } from '@js-joda/core';
 
 
 @Component({
@@ -21,16 +22,19 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
-      startTime: [null , Validators.required],
-      endTime: [null , Validators.required],
-      duration:[null , Validators.required],
+      startTime: [LocalTime.of(8,30) , Validators.required],
+      endTime: [LocalTime.of(17,0) , Validators.required],
+      duration:[30 , Validators.required],
 
-      breakStartTime: [null , Validators.required],
-      breakEndTime:[null , Validators.required],
+      breakStartTime: [LocalTime.of(10,30) , Validators.required],
+      breakEndTime:[LocalTime.of(11,0) , Validators.required],
 
-      lunchStartTime:[null , Validators.required],
-      lunchEndTime:[null , Validators.required]
+      lunchStartTime:[LocalTime.of(13,0) , Validators.required],
+      lunchEndTime:[LocalTime.of(14,0) , Validators.required]
     })
+
+    this.StartEndBreakLunchTimeData.next(this.formData)
+    this.isInValid.next(this.formGroup.invalid)
 
     this.formGroup.valueChanges.subscribe(_data => {
       this.StartEndBreakLunchTimeData.next(this.formData)
@@ -45,11 +49,11 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
 }
 
 export interface StartEndBreakLunchTime{
-  startTime:string;
-  endTime:string;
+  startTime:string|LocalTime;
+  endTime:string|LocalTime;
   duration:number;
-  breakStartTime:string
-  breakEndTime:string
-  lunchStartTime:string
-  lunchEndTime:string
+  breakStartTime:string|LocalTime
+  breakEndTime:string|LocalTime
+  lunchStartTime:string|LocalTime
+  lunchEndTime:string|LocalTime
 }

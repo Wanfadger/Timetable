@@ -63,6 +63,10 @@ export class SchoolFilterService {
     return this._http.get<ResponseDto<DbTimetable>>(`${environment.BASE_URL}/timetable2` , {params}).pipe(retry(3))
   }
 
+  saveUpdateClassTimetable(tt:NewDbTimetable):Observable<ResponseDto<string>> {
+    return this._http.post<ResponseDto<string>>(`${environment.BASE_URL}/saveUpdateClassTimetable` , tt).pipe(retry(3))
+  }
+
 }
 
 
@@ -139,8 +143,8 @@ export interface DbTimetable{
 }
 
 export interface NewDbTimetable{
-  school:string,
-  academicTerm:string,
+  school:{id:string},
+  academicTerm:{id:string},
   breakTime:string
   lunchTime:string
   lessons:NewDbTimetableLesson[]
