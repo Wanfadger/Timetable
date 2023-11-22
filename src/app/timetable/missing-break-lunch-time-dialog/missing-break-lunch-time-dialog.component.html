@@ -5,14 +5,14 @@
 <form class="flex  gap-2" [formGroup]="formGroup">
   <mat-form-field appearance="fill">
     <mat-label>Select Break Period</mat-label>
-    <mat-select formControlName="breakTime">
+    <mat-select formControlName="breakTime" [compareWith]="compareWith" >
       <mat-option  *ngFor="let timerange of getBreakTimes(data)">{{timerange.startTime}}-{{timerange.endTime}}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Select Lunch Period</mat-label>
-    <mat-select formControlName="lunchTime">
+    <mat-select formControlName="lunchTime" [compareWith]="compareWith">
       <mat-option  *ngFor="let timerange of getLunchTimes(data)">{{timerange.startTime}}-{{timerange.endTime}}</mat-option>
     </mat-select>
   </mat-form-field>
