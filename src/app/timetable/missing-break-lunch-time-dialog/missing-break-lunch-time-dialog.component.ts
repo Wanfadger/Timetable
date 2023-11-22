@@ -54,6 +54,11 @@ export class MissingBreakLunchTimeDialogComponent implements OnInit {
 
   }
 
+
+  compareWith(a:TimeRange , b:TimeRange){
+    return a&&b ? a.startTime === b.startTime : a === b
+  }
+
   getBreakTimes(times:TimeRange[]){
     return times.filter(ttr => ttr.startTime.isBefore(LocalTime.of(13,0)))
   }
