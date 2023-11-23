@@ -172,6 +172,13 @@ export interface DbTimetableLesson{
   startTime:string,
   endTime:string,
   lessonDay:string,
+  duration:number;
+  breakStartTime:string
+  breakEndTime:string
+  lunchStartTime:string
+  lunchEndTime:string
+  classStartTime:string
+  classEndTime:string
   schoolClass:DbTimetableClass,
   subject:DbTimetableSubject,
   schoolStaff:DbTimetableStaff
