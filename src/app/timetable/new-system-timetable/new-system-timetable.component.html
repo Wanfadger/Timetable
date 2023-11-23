@@ -12,7 +12,7 @@
         <div class="flex justify-between items-center mx-4 mt-1">
           <div class="flex space-x-2 items-center">
             <app-start-end-break-lunch-time (classStartEndBreakLunchTimeData)="classStartEndBreakLunchTime = $event"
-              (isInValid)="isStartEndBreakLunchTimeInValid = $event"></app-start-end-break-lunch-time>
+              (isInValid)="isStartEndBreakLunchTimeInValid = $event" [selectedLunchTimes]="selectedLunchTimes" ></app-start-end-break-lunch-time>
 
             <div>
               <button type="button" mat-raised-button color="primary"

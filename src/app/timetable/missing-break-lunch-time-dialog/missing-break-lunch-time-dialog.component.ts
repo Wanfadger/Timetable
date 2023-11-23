@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { TimeRange } from '../new-system-timetable/new-system-timetable.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalTime } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-missing-break-lunch-time-dialog',
@@ -14,74 +15,80 @@ import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
 export class MissingBreakLunchTimeDialogComponent implements OnInit {
 
 
-  invalid:boolean = false;
 
-  formGroup !: FormGroup
+  invalid: boolean = false;
 
-  constructor(public dialogRef: MatDialogRef<MissingBreakLunchTimeDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: TimeRange[], private formBuilder: FormBuilder, private toastr: ToastrService) { }
+  breakTimeControl: FormControl = new FormControl(null, Validators.required)
+  lunchTimeControl: FormControl = new FormControl(null, Validators.required)
+
+  lunchTimes: TimeRange[] = this.getLunchTimes(this.data)
+
+  constructor(public dialogRef: MatDialogRef<MissingBreakLunchTimeDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: TimeRange[], private toastr: ToastrService) { }
 
   ngOnInit(): void {
-    this.formGroup = this.formBuilder.group({
-      breakTime: [null, [Validators.required]],
-      lunchTime: [null, [Validators.required]]
-    })
+    if (this.lunchTimes.length <= 0) {
+      console.log("no lunch")
+     this.lunchTimeControl = new FormControl(null)
+    }
+  }
 
-    console.log(this.formGroup.get('breakTime'))
+  onLunchChange(event: MatSelectChange) {
+    console.log(event.value)
+    const lunchTimes = event.value as TimeRange[];
+    // console.log(lunchTime)
+    const breakTime = this.breakTimeControl.value as TimeRange;
 
-    this.formGroup.get("breakTime")?.valueChanges.subscribe((breakTime: TimeRange) => {
-      console.log(breakTime)
-      const lunchTime = this.formGroup.get("lunchTime")?.value as TimeRange
-      if (lunchTime) {
-        // BREAK CANNOT BE AFTER LUNCH TIME
-        if (breakTime.startTime.isAfter(lunchTime.startTime)) {
-          this.toastr.warning("Break time cannot be after lunck time")
-          this.invalid = true;
-        }else{
-          this.invalid = false;
-        }
+    if (lunchTimes.length > 0) {
+      // BREAK CANNOT BE AFTER LUNCH TIME
+      if (lunchTimes.some(l => l.startTime.isBefore(breakTime.startTime)) || lunchTimes.some(l => l.startTime.equals(breakTime.startTime))) {
+        this.toastr.warning("Any Lunch time cannot be before or equal Break time")
+        this.invalid = true;
+      } else {
+        this.invalid = false;
       }
-    })
+    }else{
+      this.invalid = true;
+    }
 
-    this.formGroup.get("lunchTime")?.valueChanges.subscribe((lunchTime: TimeRange) => {
-      console.log(lunchTime)
-      const breakTime = this.formGroup.get("breakTime")?.value as TimeRange;
-      if (lunchTime) {
-        // BREAK CANNOT BE AFTER LUNCH TIME
-        if (lunchTime.startTime.isAfter(breakTime.startTime)) {
-          this.toastr.warning("Lunch time cannot be before Break time")
-          this.invalid = true;
-        }else{
-          this.invalid = false;
-        }
+
+  }
+  onBreakChange(event: MatSelectChange) {
+    const breakTime = event.value as TimeRange;
+    // console.log(breakTime)
+    const lunchTime = this.lunchTimeControl.value as TimeRange
+    if (lunchTime) {
+      // BREAK CANNOT BE AFTER LUNCH TIME
+      if (breakTime.startTime.isAfter(lunchTime.startTime) || breakTime.startTime.equals(lunchTime.startTime)) {
+        this.toastr.warning("Break time cannot be after or equal lunch time")
+        this.invalid = true;
+      } else {
+        this.invalid = false;
       }
-    })
-
+    }
   }
 
 
-  compareWith(a:TimeRange , b:TimeRange){
-    return a&&b ? a.startTime.format(TelaTimetablePattern) == b.startTime.format(TelaTimetablePattern) : a == b
+  compareWith(a: TimeRange, b: TimeRange) {
+    return a && b ? a.startTime.format(TelaTimetablePattern) == b.startTime.format(TelaTimetablePattern) : a == b
   }
 
-  getBreakTimes(times:TimeRange[]){
-    return times.filter(ttr => ttr.startTime.isBefore(LocalTime.of(13,0)))
+  getBreakTimes(times: TimeRange[]) {
+    return times.filter(ttr => ttr.startTime.isBefore(LocalTime.of(12, 0)))
   }
 
-  getLunchTimes(times:TimeRange[]){
-    return times.filter(ttr => ttr.startTime.isAfter(LocalTime.of(12,0)))
+  getLunchTimes(times: TimeRange[]) {
+    return times.filter(ttr => ttr.startTime.isAfter(LocalTime.of(12, 59)))
   }
 
-  get formData(){
-    return this.formGroup.value
-  }
+
 
   close() {
     this.dialogRef.close(null)
   }
 
   done() {
-    console.log('data ' , this.formData)
-    //this.dialogRef.close({b:this.formData.breakTime as TimeRange , l:this.formData.lunchTime as TimeRange})
+    // console.log('data ', { b: this.breakTimeControl.value as TimeRange, l: this.lunchTimeControl.value as TimeRange[] })
+    this.dialogRef.close({ b: this.breakTimeControl.value as TimeRange, l: this.lunchTimeControl.value as TimeRange })
   }
 
 }

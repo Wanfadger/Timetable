@@ -1,5 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { TelaTimetablePattern } from './../../shared/TelaDateTimePattern';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TimeRange } from '../new-system-timetable/new-system-timetable.component';
 
 
 @Component({
@@ -14,6 +16,8 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
 
   @Output() classStartEndBreakLunchTimeData:EventEmitter<ClassStartEndBreakLunchTime> = new EventEmitter<ClassStartEndBreakLunchTime>()
   @Output() isInValid:EventEmitter<boolean> = new EventEmitter<boolean>()
+
+  @Input() selectedLunchTimes:TimeRange[] = []
 
 
 
@@ -36,10 +40,21 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
     this.isInValid.next(this.formGroup.invalid)
 
 
-    this.formGroup.valueChanges.subscribe(data => {
+    this.formGroup.valueChanges.subscribe(_data => {
       this.classStartEndBreakLunchTimeData.next(this.formData)
       this.isInValid.next(this.formGroup.invalid)
     })
+
+    if(this.selectedLunchTimes.length > 0) {
+      const startTime:TimeRange = this.selectedLunchTimes[0]
+      const endTime:TimeRange = this.selectedLunchTimes[1]
+
+      // console.log('startTime ' , startTime , 'endTime ' , endTime)
+
+      this.formGroup.get("lunchStartTime")?.patchValue(startTime.startTime.format(TelaTimetablePattern))
+      this.formGroup.get("lunchEndTime")?.patchValue(endTime.endTime.format(TelaTimetablePattern))
+    }
+
   }
 
   get formData(){

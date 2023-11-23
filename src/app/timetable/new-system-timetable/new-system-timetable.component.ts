@@ -6,11 +6,11 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FilteredSchoolDetails } from '../school-filter/school-filter.component';
 import { NewDbTimetable, SchoolFilterService } from '../school-filter/school-filter.service';
-import { LocalTime, DayOfWeek } from '@js-joda/core';
+import { LocalTime, DayOfWeek, Duration, Period } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
 import { MatSelectChange } from '@angular/material/select';
 import { ClassStartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
-import { partition } from 'lodash';
+import { partition, includes } from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
 import { MissingBreakLunchTimeDialogComponent } from '../missing-break-lunch-time-dialog/missing-break-lunch-time-dialog.component';
 import { Subscription } from 'rxjs';
@@ -34,6 +34,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
   startEndTimeRanges: TimeRange[] = []
+  selectedLunchTimes: TimeRange[] = []
 
 
   newTimetable: NewDbTimetable = {
@@ -41,6 +42,9 @@ export class NewSystemTimetableComponent implements OnInit {
     academicTerm: { id: "" },
     lessons: []
   }
+
+  // if a list is empty make it optional and lunchtime be null
+  // if list is more than one make it mandatory and multiple
 
 
 
@@ -98,8 +102,13 @@ export class NewSystemTimetableComponent implements OnInit {
 
   generateTimetable() {
     console.log('s ', this.classStartEndBreakLunchTime.classStartTime, ' e ', this.classStartEndBreakLunchTime.classEndTime)
-    this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime , TelaTimetablePattern),LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
+    this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime ,
+      TelaTimetablePattern),LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
       this.classStartEndBreakLunchTime.duration)
+  }
+
+  isTimeBetween(time:LocalTime , startTime: LocalTime, endTime: LocalTime): boolean {
+    return (time.isAfter(startTime) || time.equals(startTime)) && (time.isBefore(endTime))
   }
 
 
@@ -115,16 +124,38 @@ export class NewSystemTimetableComponent implements OnInit {
       periods.push(timerange)
     }
 
-    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => ((period.startTime.equals(this.classStartEndBreakLunchTime.breakStartTime))
-      || (period.startTime.equals(this.classStartEndBreakLunchTime.lunchStartTime))))
+    // console.log('periods 1 :', periods.length)
+    // console.log('periods 1 :', periods)
+
+
+    // check if break and lunch time are selected
+    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period =>
+      this.isTimeBetween(period.startTime , LocalTime.parse(this.classStartEndBreakLunchTime.breakStartTime , TelaTimetablePattern) , LocalTime.parse(this.classStartEndBreakLunchTime.breakEndTime , TelaTimetablePattern) )
+      ||
+      this.isTimeBetween(period.startTime , LocalTime.parse(this.classStartEndBreakLunchTime.lunchStartTime , TelaTimetablePattern) , LocalTime.parse(this.classStartEndBreakLunchTime.lunchEndTime , TelaTimetablePattern) )
+      )
 
     if (parrtions[0].length <= 0) {
       let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent, { disableClose: true, data: periods });
 
-      dialogRef.afterClosed().subscribe((result: { b: TimeRange, l: TimeRange }) => {
-        console.log('Dialog result:', result); // Pizza!
+      dialogRef.afterClosed().subscribe((result: { b: TimeRange, l: TimeRange[]|null }) => {
+        // console.log('Dialog result:', result); // Pizza!
         if (result) {
-          periods = periods.filter(ttr => !(ttr == result.b || ttr == result.l))
+          if(result.l){
+            periods =   periods.filter(ttr => !(ttr == result.b || (<TimeRange[]>result.l).includes(ttr)))
+            this.selectedLunchTimes = result.l
+          }else{
+            periods =   periods.filter(ttr => !(ttr == result.b))
+          }
+
+          this.startEndTimeRanges = periods
+          // console.log('periods 2 : ', periods.length)
+          // console.log('periods 2 : ', periods)
+
+          // this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime ,TelaTimetablePattern),
+          // LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
+          // this.classStartEndBreakLunchTime.duration)
+
         } else {
           periods = []
         }
