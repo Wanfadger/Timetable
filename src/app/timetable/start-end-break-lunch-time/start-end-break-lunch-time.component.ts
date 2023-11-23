@@ -13,7 +13,7 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
 
   formGroup !:FormGroup
 
-  @Output() StartEndBreakLunchTimeData:EventEmitter<StartEndBreakLunchTime> = new EventEmitter<StartEndBreakLunchTime>()
+  @Output() classStartEndBreakLunchTimeData:EventEmitter<ClassStartEndBreakLunchTime> = new EventEmitter<ClassStartEndBreakLunchTime>()
   @Output() isInValid:EventEmitter<boolean> = new EventEmitter<boolean>()
 
 
@@ -22,8 +22,8 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
-      startTime: [LocalTime.of(8,30) , Validators.required],
-      endTime: [LocalTime.of(17,0) , Validators.required],
+      classStartTime: [LocalTime.of(8,30) , Validators.required],
+      classEndTime: [LocalTime.of(17,0) , Validators.required],
       duration:[30 , Validators.required],
 
       breakStartTime: [LocalTime.of(10,30) , Validators.required],
@@ -33,11 +33,11 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
       lunchEndTime:[LocalTime.of(14,0) , Validators.required]
     })
 
-    this.StartEndBreakLunchTimeData.next(this.formData)
+    this.classStartEndBreakLunchTimeData.next(this.formData)
     this.isInValid.next(this.formGroup.invalid)
 
     this.formGroup.valueChanges.subscribe(_data => {
-      this.StartEndBreakLunchTimeData.next(this.formData)
+      this.classStartEndBreakLunchTimeData.next(this.formData)
       this.isInValid.next(this.formGroup.invalid)
     })
   }
@@ -48,9 +48,9 @@ export class StartEndBreakLunchTimeComponent implements OnInit {
 
 }
 
-export interface StartEndBreakLunchTime{
-  startTime:string|LocalTime;
-  endTime:string|LocalTime;
+export interface ClassStartEndBreakLunchTime{
+  classStartTime:string|LocalTime;
+  classEndTime:string|LocalTime;
   duration:number;
   breakStartTime:string|LocalTime
   breakEndTime:string|LocalTime

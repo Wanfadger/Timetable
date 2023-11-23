@@ -69,7 +69,7 @@ export class ViewTimetableComponent implements OnInit {
      const _$:Subscription =  this.schoolFilterService.loadTimetable(params).subscribe({
       next:response => {
         this.isLoading = false
-        // console.log(response)
+        console.log("response " , response)
         this.dbTimetable = {... response.data}
         const ttls = this.dbTimetable.lessons;
         this.dbTimetableClasses = uniq(ttls.map(tl => tl.schoolClass.name)).sort()

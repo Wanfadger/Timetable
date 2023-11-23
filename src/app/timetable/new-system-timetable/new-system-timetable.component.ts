@@ -1,3 +1,4 @@
+
 import { DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson } from 'src/app/timetable/school-filter/school-filter.service';
 import { DbTimetableClass } from './../school-filter/school-filter.service';
 import { Component, OnInit } from '@angular/core';
@@ -8,8 +9,8 @@ import { NewDbTimetable, SchoolFilterService } from '../school-filter/school-fil
 import { LocalTime, DayOfWeek } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
 import { MatSelectChange } from '@angular/material/select';
-import { StartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
-import { Dictionary, groupBy, partition } from 'lodash';
+import { ClassStartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
+import { partition } from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
 import { MissingBreakLunchTimeDialogComponent } from '../missing-break-lunch-time-dialog/missing-break-lunch-time-dialog.component';
 import { Subscription } from 'rxjs';
@@ -27,7 +28,7 @@ export class NewSystemTimetableComponent implements OnInit {
   // endTimeControl: FormControl = new FormControl(LocalTime.of(17, 0).format(TelaTimetablePattern));
   // durationControl: FormControl = new FormControl(null);
   DayOfWeek = DayOfWeek
-  startEndBreakLunchTime !: StartEndBreakLunchTime
+  classStartEndBreakLunchTime !: ClassStartEndBreakLunchTime
   isStartEndBreakLunchTimeInValid: boolean = true
   isSaving: boolean = false
 
@@ -38,8 +39,6 @@ export class NewSystemTimetableComponent implements OnInit {
   newTimetable: NewDbTimetable = {
     school: { id: "" },
     academicTerm: { id: "" },
-    breakTime: "string",
-    lunchTime: "string",
     lessons: []
   }
 
@@ -98,9 +97,9 @@ export class NewSystemTimetableComponent implements OnInit {
   }
 
   generateTimetable() {
-      console.log('s ' , this.startEndBreakLunchTime.startTime  , ' e ' , this.startEndBreakLunchTime.endTime)
-    this.startEndTimeRanges = this.generateTimetablePeriods(this.startEndBreakLunchTime.startTime as LocalTime, this.startEndBreakLunchTime.endTime as LocalTime,
-      this.startEndBreakLunchTime.duration)
+    console.log('s ', this.classStartEndBreakLunchTime.classStartTime, ' e ', this.classStartEndBreakLunchTime.classEndTime)
+    this.startEndTimeRanges = this.generateTimetablePeriods(this.classStartEndBreakLunchTime.classStartTime as LocalTime, this.classStartEndBreakLunchTime.classEndTime as LocalTime,
+      this.classStartEndBreakLunchTime.duration)
   }
 
 
@@ -116,8 +115,8 @@ export class NewSystemTimetableComponent implements OnInit {
       periods.push(timerange)
     }
 
-    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => ((period.startTime.equals(this.startEndBreakLunchTime.breakStartTime))
-      || (period.startTime.equals(this.startEndBreakLunchTime.lunchStartTime))))
+    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => ((period.startTime.equals(this.classStartEndBreakLunchTime.breakStartTime))
+      || (period.startTime.equals(this.classStartEndBreakLunchTime.lunchStartTime))))
 
     if (parrtions[0].length <= 0) {
       let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent, { disableClose: true, data: periods });
@@ -163,9 +162,25 @@ export class NewSystemTimetableComponent implements OnInit {
         lessonDay: dayOfWeek.name(),
         schoolClass: schoolClass,
         subject: null,
-        schoolStaff: staff
+        schoolStaff: staff,
+        duration:this.classStartEndBreakLunchTime.duration,
+        breakStartTime:(<LocalTime> this.classStartEndBreakLunchTime.breakStartTime).format(TelaTimetablePattern),
+        breakEndTime:(<LocalTime> this.classStartEndBreakLunchTime.breakEndTime).format(TelaTimetablePattern),
+        lunchStartTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchStartTime).format(TelaTimetablePattern),
+        lunchEndTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchEndTime).format(TelaTimetablePattern),
+        classStartTime:(<LocalTime> this.classStartEndBreakLunchTime.classStartTime).format(TelaTimetablePattern),
+        classEndTime:(<LocalTime> this.classStartEndBreakLunchTime.classEndTime).format(TelaTimetablePattern),
       }
-      this.newTimetable.lessons.push(lesson)
+      // this.newTimetable.lessons.push(lesson)
+      this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
+        if (a.startTime < b.startTime) {
+          return -1;
+        } else if (a.startTime > b.startTime) {
+          return 1
+        } else {
+          return 0;
+        }
+      })
     }
 
     console.log(this.newTimetable.lessons)
@@ -196,9 +211,25 @@ export class NewSystemTimetableComponent implements OnInit {
         lessonDay: dayOfWeek.name(),
         schoolClass: schoolClass,
         subject: subject,
-        schoolStaff: null
+        schoolStaff: null,
+        duration:this.classStartEndBreakLunchTime.duration,
+        breakStartTime:(<LocalTime> this.classStartEndBreakLunchTime.breakStartTime).format(TelaTimetablePattern),
+        breakEndTime:(<LocalTime> this.classStartEndBreakLunchTime.breakEndTime).format(TelaTimetablePattern),
+        lunchStartTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchStartTime).format(TelaTimetablePattern),
+        lunchEndTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchEndTime).format(TelaTimetablePattern),
+        classStartTime:(<LocalTime> this.classStartEndBreakLunchTime.classStartTime).format(TelaTimetablePattern),
+        classEndTime:(<LocalTime> this.classStartEndBreakLunchTime.classEndTime).format(TelaTimetablePattern),
       }
-      this.newTimetable.lessons.push(lesson)
+      // this.newTimetable.lessons.push(lesson)
+      this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
+        if (a.startTime < b.startTime) {
+          return -1;
+        } else if (a.startTime > b.startTime) {
+          return 1
+        } else {
+          return 0;
+        }
+      })
     }
 
     console.log(this.newTimetable.lessons)
@@ -206,38 +237,44 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
   saveUpdateClassTimetable() {
-    console.log('this.newTimetable ', this.newTimetable)
-    if (confirm(`Are you sure you want to save this class timetable`)) {
+    // this.newTimetable.lessons = TEST_LESSONS
+    // console.log('this.newTimetable ', this.newTimetable)
 
-      const someInvalid: boolean = this.newTimetable.lessons.some(lesson => (lesson.schoolStaff == null || lesson.subject == null))
+    const someInvalid = this.newTimetable.lessons.filter(lesson => (lesson.schoolStaff == null || lesson.subject == null))
 
-      if(!(this.newTimetable.lessons.length == 0 || this.newTimetable.lessons.length < (this.startEndTimeRanges.length * 5)) ){
-        this.toastr.success('Timetable lessons is missing')
-      }else{
-          // upload to server
-          console.log('No ')
+    // console.log('someInvalid: ', someInvalid)
+    if ((someInvalid.length > 0 || this.newTimetable.lessons.length == 0 || this.newTimetable.lessons.length < (this.startEndTimeRanges.length * 5))) {
+      this.toastr.warning(`Timetable invalid lessons on
+       ${someInvalid.map(l => `${l.lessonDay} @ ${l.startTime} - ${l.endTime}` )}\
+       Reselect to fix
+      `)
+    } else {
 
-          this.newTimetable.academicTerm = { id: this.filteredSchoolDetails?.term?.id as string }
-          this.newTimetable.school = { id: this.filteredSchoolDetails?.school?.id as string }
+      if (confirm(`Are you sure you want to save this class timetable`)) {
+        // upload to server
+        // console.log('No ')
+        // console.log('reday newTimetable ', this.newTimetable)
 
-          console.log("IS ready to upload ", this.newTimetable)
-          // update class details
+        this.newTimetable.academicTerm = { id: this.filteredSchoolDetails?.term?.id as string }
+        this.newTimetable.school = { id: this.filteredSchoolDetails?.school?.id as string }
 
-          this.isSaving = true
-          const _$:Subscription = this.schoolFilterService.saveUpdateClassTimetable(this.newTimetable).subscribe({
-           next:response => {
-             this.isSaving = false
-             this.toastr.success(response.data)
-           },
-           error: error => {
-             this.isSaving = false
+        // console.log("IS ready to upload ", this.newTimetable)
+        // update class details
+
+        this.isSaving = true
+        const _$: Subscription = this.schoolFilterService.saveUpdateClassTimetable(this.newTimetable).subscribe({
+          next: response => {
+            this.isSaving = false
+            this.toastr.success(response.data)
+          },
+          error: error => {
+            this.isSaving = false
             console.log(error)
-           },
-           complete: () => _$.unsubscribe()
-          })
-        }
+          },
+          complete: () => _$.unsubscribe()
+        })
       }
-
+    }
   }
 
 

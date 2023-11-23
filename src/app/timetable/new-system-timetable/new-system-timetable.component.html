@@ -11,7 +11,7 @@
       <ng-template matTabContent>
         <div class="flex justify-between items-center mx-4 mt-1">
           <div class="flex space-x-2 items-center">
-            <app-start-end-break-lunch-time (StartEndBreakLunchTimeData)="startEndBreakLunchTime = $event"
+            <app-start-end-break-lunch-time (classStartEndBreakLunchTimeData)="classStartEndBreakLunchTime = $event"
               (isInValid)="isStartEndBreakLunchTimeInValid = $event"></app-start-end-break-lunch-time>
 
             <div>
@@ -21,11 +21,11 @@
             </div>
           </div>
 
-          <!-- actions-->
+          <!-- actions  ||newTimetable.lessons.length < (startEndTimeRanges.length * 5)-->
           <div class="items-center">
             <div class="flex space-x-6 justify-end mr-8">
 
-              <button mat-icon-button color="primary" [disabled]="isSaving||newTimetable.lessons.length < (this.startEndTimeRanges.length * 5)"
+              <button mat-icon-button color="primary" [disabled]="isSaving|| startEndTimeRanges.length <=0 ||newTimetable.lessons.length < (startEndTimeRanges.length * 5)"
                 [matTooltip]="'save timetableClass timetable changes'" (click)="saveUpdateClassTimetable()">
                 <mat-icon>check</mat-icon>
               </button>
