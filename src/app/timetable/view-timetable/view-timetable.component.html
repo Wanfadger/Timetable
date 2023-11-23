@@ -9,20 +9,23 @@
 
 <section class="mt-2 px-2" *ngIf="dbTimetable">
   <mat-progress-bar mode="indeterminate" color="primary" *ngIf="isUpdating||isLoading"></mat-progress-bar>
-  <mat-tab-group mat-align-tabs="start"  (selectedTabChange)="isEdit=false" >
-    <mat-tab [label]="timetableClass" *ngFor="let timetableClass of dbTimetableClasses">
+  <mat-tab-group mat-align-tabs="start" (selectedTabChange)="isEdit=false">
+    <mat-tab [label]="timetableClass.name" *ngFor="let timetableClass of filteredSchoolDetails?.schoolClasses||[]">
       <ng-template matTabContent>
         <div class="flex space-x-6 justify-end mr-8">
 
-          <button mat-icon-button color="primary" [matTooltip]="'save '+timetableClass+' timetable changes'" [disabled]="!isEdit || isUpdating"  (click)="updateClassTimetable(timetableClass)">
+          <button mat-icon-button color="primary" [matTooltip]="'save '+timetableClass+' timetable changes'"
+            [disabled]="!isEdit || isUpdating" (click)="updateClassTimetable(timetableClass.name)">
             <mat-icon>check</mat-icon>
           </button>
 
-          <button mat-icon-button color="primary" [matTooltip]="'edit '+timetableClass+' timetable'" [disabled]="isUpdating" (click)="isEdit=!isEdit" >
+          <button mat-icon-button color="primary" [matTooltip]="'edit '+timetableClass.name+' timetable'"
+            [disabled]="isUpdating" (click)="isEdit=!isEdit">
             <mat-icon>edit</mat-icon>
           </button>
 
-          <button mat-icon-button color="primary" [matTooltip]="'export '+timetableClass+' timetable'" [disabled]="isUpdating">
+          <button mat-icon-button color="primary" [matTooltip]="'export '+timetableClass.name+' timetable'"
+            [disabled]="isUpdating">
             <mat-icon>system_update_alt</mat-icon>
           </button>
         </div>
@@ -30,7 +33,7 @@
           <table class="border-separate border-spacing-2 border border-slate-400 w-full">
 
             <caption class="caption-top text-xl p-2">
-              {{timetableClass|titlecase}} TimeTable
+              {{timetableClass.name|uppercase}} TimeTable
             </caption>
 
             <thead>
@@ -46,20 +49,235 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let startTime of dbTimetableStartTimes ;index as i" class="text-center">
+              <tr *ngIf="filterClassTimes(dbTimetable.lessons , timetableClass.name).length <=0">
+                <div class="flex justify-center items-center text-red-500 p-8">
+                  <span>Missing class timetable</span>
+                </div>
+              </tr>
+
+              <tr *ngFor="let startEndTime of filterClassTimes(dbTimetable.lessons , timetableClass.name) ;index as i"
+                class="text-center">
                 <td class="border border-slate-200 w-36">{{i+1}}</td>
 
                 <!-- there are many lessons with same time but different days-->
-                <td *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
+                <td
+                  *ngIf="filterByClassName(dbTimetable.lessons ,timetableClass.name) as classLessonsByClass ; else missingDayLesson">
                   <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <span
-                          class="border border-slate-200 w-36">{{lessons[0].startTime}}-{{lessons[0].endTime}}</span>
+                  <div
+                    *ngIf="filterByStarTime(classLessonsByClass , startEndTime.startTime) as timesLessons; else missingDayLesson">
+                    <span class="border border-slate-200 w-36">
+                      {{startEndTime.startTime}} - {{startEndTime.endTime}}
+                    </span>
+                  </div>
+                </td>
+
+
+                <!--monday-->
+                <td class="border border-slate-200"
+                  *ngIf="filterByClassName(dbTimetable.lessons , timetableClass.name) as classLessonsByClass ; else missingDayLesson">
+                  <div
+                    *ngIf="filterByStarTime(classLessonsByClass , startEndTime.startTime) as timesLessons; else missingDayLesson">
+                    <!--  group class lessons by time -->
+                    <div *ngIf="findByWeekDay(timesLessons , DayOfWeek.MONDAY) as lesson ; else missingDayLesson">
+                      <!--  get grouped class lessons by time -->
+                      <div>
+                        <div class="font-medium text-xl">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.subject.code|uppercase}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Update Subject</mat-label>
+                              <mat-select (selectionChange)="onSubjectChange($event , lesson)">
+                                <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]"
+                                  [value]="subject">
+                                  {{subject.code}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </div>
+
+                        <div class="text-lg text-slate-500">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Select Teacher</mat-label>
+                              <mat-select (selectionChange)="onStaffChange($event , lesson)">
+                                <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                                  {{staff.firstName}} {{staff.lastName}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+
+                <!--tuesday-->
+                <td class="border border-slate-200"
+                  *ngIf="filterByClassName(dbTimetable.lessons , timetableClass.name) as classLessonsByClass ; else missingDayLesson">
+                  <div
+                    *ngIf="filterByStarTime(classLessonsByClass , startEndTime.startTime) as timesLessons; else missingDayLesson">
+                    <!--  group class lessons by time -->
+                    <div *ngIf="findByWeekDay(timesLessons , DayOfWeek.TUESDAY) as lesson ; else missingDayLesson">
+                      <!--  get grouped class lessons by time -->
+                      <div>
+                        <div class="font-medium text-xl">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.subject.code|uppercase}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Update Subject</mat-label>
+                              <mat-select (selectionChange)="onSubjectChange($event , lesson)">
+                                <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]"
+                                  [value]="subject">
+                                  {{subject.code}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </div>
+
+                        <div class="text-lg text-slate-500">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Select Teacher</mat-label>
+                              <mat-select (selectionChange)="onStaffChange($event , lesson)">
+                                <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                                  {{staff.firstName}} {{staff.lastName}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+
+                <!--WED-->
+                <td class="border border-slate-200"
+                  *ngIf="filterByClassName(dbTimetable.lessons , timetableClass.name) as classLessonsByClass ; else missingDayLesson">
+                  <div
+                    *ngIf="filterByStarTime(classLessonsByClass , startEndTime.startTime) as timesLessons; else missingDayLesson">
+                    <!--  group class lessons by time -->
+                    <div *ngIf="findByWeekDay(timesLessons , DayOfWeek.WEDNESDAY) as lesson ; else missingDayLesson">
+                      <!--  get grouped class lessons by time -->
+                      <div>
+                        <div class="font-medium text-xl">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.subject.code|uppercase}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Update Subject</mat-label>
+                              <mat-select (selectionChange)="onSubjectChange($event , lesson)">
+                                <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]"
+                                  [value]="subject">
+                                  {{subject.code}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </div>
+
+                        <div class="text-lg text-slate-500">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Select Teacher</mat-label>
+                              <mat-select (selectionChange)="onStaffChange($event , lesson)">
+                                <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                                  {{staff.firstName}} {{staff.lastName}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+
+                <!--THURS-->
+                <td class="border border-slate-200"
+                  *ngIf="filterByClassName(dbTimetable.lessons , timetableClass.name) as classLessonsByClass ; else missingDayLesson">
+                  <div
+                    *ngIf="filterByStarTime(classLessonsByClass , startEndTime.startTime) as timesLessons; else missingDayLesson">
+                    <!--  group class lessons by time -->
+                    <div *ngIf="findByWeekDay(timesLessons , DayOfWeek.THURSDAY) as lesson ; else missingDayLesson">
+                      <!--  get grouped class lessons by time -->
+                      <div>
+                        <div class="font-medium text-xl">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.subject.code|uppercase}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Update Subject</mat-label>
+                              <mat-select (selectionChange)="onSubjectChange($event , lesson)">
+                                <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]"
+                                  [value]="subject">
+                                  {{subject.code}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </div>
+
+                        <div class="text-lg text-slate-500">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
+                            </span>
+
+
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Select Teacher</mat-label>
+                              <mat-select (selectionChange)="onStaffChange($event , lesson)">
+                                <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                                  {{staff.firstName}} {{staff.lastName}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -68,286 +286,56 @@
 
                 <!--monday-->
                 <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.MONDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
+                  *ngIf="filterByClassName(dbTimetable.lessons , timetableClass.name) as classLessonsByClass ; else missingDayLesson">
+                  <div
+                    *ngIf="filterByStarTime(classLessonsByClass , startEndTime.startTime) as timesLessons; else missingDayLesson">
+                    <!--  group class lessons by time -->
+                    <div *ngIf="findByWeekDay(timesLessons , DayOfWeek.FRIDAY) as lesson ; else missingDayLesson">
+                      <!--  get grouped class lessons by time -->
+                      <div>
+                        <div class="font-medium text-xl">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.subject.code|uppercase}}
+                            </span>
 
 
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                  <mat-label>Update Subject</mat-label>
-                                  <mat-select (selectionChange)="onSubjectChange($event , lesson)">
-                                    <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
-                                      {{subject.code}}
-                                    </mat-option>
-                                  </mat-select>
-                                </mat-form-field>
-                              </div>
-                            </div>
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Update Subject</mat-label>
+                              <mat-select (selectionChange)="onSubjectChange($event , lesson)">
+                                <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]"
+                                  [value]="subject">
+                                  {{subject.code}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                        </div>
 
-                            <div class="text-lg text-slate-500">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
+                        <div class="text-lg text-slate-500">
+                          <div class="flex flex-col space-y-2">
+                            <span>
+                              {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
+                            </span>
 
 
-                                 <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit" >
-                                  <mat-label>Select Teacher</mat-label>
-                                  <mat-select  (selectionChange)="onStaffChange($event , lesson)">
-                                    <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
-                                      {{staff.firstName}} {{staff.lastName}}
-                                    </mat-option>
-                                  </mat-select>
-                                </mat-form-field>
-
-                              </div>
-                            </div>
+                            <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
+                              <mat-label>Select Teacher</mat-label>
+                              <mat-select (selectionChange)="onStaffChange($event , lesson)">
+                                <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
+                                  {{staff.firstName}} {{staff.lastName}}
+                                </mat-option>
+                              </mat-select>
+                            </mat-form-field>
 
                           </div>
                         </div>
+
                       </div>
                     </div>
                   </div>
                 </td>
 
-                <!--tuesday-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.TUESDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                  <mat-label>Update Subject</mat-label>
-                                  <mat-select  (selectionChange)="onSubjectChange($event , lesson )">
-                                    <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
-                                      {{subject.code}}
-                                    </mat-option>
-                                  </mat-select>
-                                </mat-form-field>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                  <mat-label>Select Teacher</mat-label>
-                                  <mat-select (selectionChange)="onStaffChange($event , lesson )">
-                                    <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
-                                      {{staff.firstName}} {{staff.lastName}}
-                                    </mat-option>
-                                  </mat-select>
-                                </mat-form-field>
-
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <!--WEDNESDAY-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.WEDNESDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                 <mat-label>Update Subject</mat-label>
-                                 <mat-select (selectionChange)="onSubjectChange($event , lesson)">
-                                   <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
-                                     {{subject.code}}
-                                   </mat-option>
-                                 </mat-select>
-                               </mat-form-field>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                 <mat-label>Select Teacher</mat-label>
-                                 <mat-select (selectionChange)="onStaffChange($event , lesson)" >
-                                   <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
-                                     {{staff.firstName}} {{staff.lastName}}
-                                   </mat-option>
-                                 </mat-select>
-                               </mat-form-field>
-
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <!--THURSDAY-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.THURSDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                 <mat-label>Update Subject</mat-label>
-                                 <mat-select  (selectionChange)="onSubjectChange($event , lesson)">
-                                   <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
-                                     {{subject.code}}
-                                   </mat-option>
-                                 </mat-select>
-                               </mat-form-field>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit" >
-                                 <mat-label>Select Teacher</mat-label>
-                                 <mat-select  (selectionChange)="onStaffChange($event , lesson)" >
-                                   <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
-                                     {{staff.firstName}} {{staff.lastName}}
-                                   </mat-option>
-                                 </mat-select>
-                               </mat-form-field>
-
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <!--FRIDAY-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.FRIDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                  <mat-label>Update Subject</mat-label>
-                                  <mat-select  (selectionChange)="onSubjectChange($event , lesson)">
-                                    <mat-option *ngFor="let subject of filteredSchoolDetails?.subjects||[]" [value]="subject">
-                                      {{subject.code}}
-                                    </mat-option>
-                                  </mat-select>
-                                </mat-form-field>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="flex flex-col space-y-2">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-
-
-                                <mat-form-field appearance="outline" style="font-size: 10px;" *ngIf="isEdit">
-                                  <mat-label>Select Teacher</mat-label>
-                                  <mat-select  (selectionChange)="onStaffChange($event , lesson)">
-                                    <mat-option *ngFor="let staff of filteredSchoolDetails?.staffList||[]" [value]="staff">
-                                      {{staff.firstName}} {{staff.lastName}}
-                                    </mat-option>
-                                  </mat-select>
-                                </mat-form-field>
-
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
 
               </tr>
             </tbody>
@@ -357,241 +345,7 @@
 
     </mat-tab>
 
-    <mat-tab [label]="school!.name" *ngIf="filteredSchoolDetails?.school as school">
-      <ng-template matTabContent>
-        <div class="flex justify-end mb-2 mr-8">
-          <button mat-icon-button color="primary" [matTooltip]="'export '+school.name+' timetable'" [disabled]="isUpdating">
-            <mat-icon>system_update_alt</mat-icon>
-          </button>
-        </div>
-        <div id="pdfPage" class="mb-10" *ngFor="let timetableClass of dbTimetableClasses">
-          <table class="border-separate border-spacing-2 border border-slate-400 w-full">
 
-            <caption class="caption-top text-xl p-2">
-              {{timetableClass|titlecase}} TimeTable
-            </caption>
-
-            <thead>
-              <tr>
-                <th class="border border-slate-600 w-36">Time</th>
-                <th class="border border-slate-600">Monday</th>
-                <th class="border border-slate-600">Tuesday</th>
-                <th class="border border-slate-600">Wednesday</th>
-                <th class="border border-slate-600">Thursday</th>
-                <th class="border border-slate-600">Friday</th>
-              </tr>
-            </thead>
-
-
-
-            <tbody>
-              <tr *ngFor="let startTime of dbTimetableStartTimes ;index as i" class="text-center">
-                <td class="border border-slate-200 w-36">{{i+1}}</td>
-
-                <!-- there are many lessons with same time but different days-->
-                <td *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <span
-                          class="border border-slate-200 w-36">{{lessons[0].startTime}}-{{lessons[0].endTime}}</span>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-
-                <!--monday-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.MONDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <!--tuesday-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.TUESDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <!--WEDNESDAY-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.WEDNESDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <!--THURSDAY-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.THURSDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <!--FRIDAY-->
-                <td class="border border-slate-200"
-                  *ngIf="groupByClassName(dbTimetable.lessons) as classLessonsByClass ; else missingDayLesson">
-                  <!-- group class -->
-                  <div *ngIf="classLessonsByClass[timetableClass] as classLessons; else missingDayLesson">
-                    <!-- get grouped class lessons -->
-                    <div *ngIf="groupByStarTime(classLessons) as lessons; else missingDayLesson">
-                      <!--  group class lessons by time -->
-                      <div *ngIf="lessons[startTime] as lessons ; else missingDayLesson">
-                        <!--  get grouped class lessons by time -->
-                        <div class="border border-slate-200"
-                          *ngIf="getLessonByDayOfWeek(lessons , DayOfWeek.FRIDAY) as lesson; else missingDayLesson">
-                          <div>
-                            <div class="font-medium text-xl">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.subject.code|titlecase}}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div class="text-lg text-slate-500">
-                              <div class="space-x-4">
-                                <span>
-                                  {{lesson.schoolStaff.firstName+" "+lesson.schoolStaff.lastName}}
-                                </span>
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </ng-template>
-    </mat-tab>
   </mat-tab-group>
 </section>
 

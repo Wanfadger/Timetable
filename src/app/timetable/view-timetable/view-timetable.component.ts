@@ -3,11 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { DayOfWeek } from '@js-joda/core';
-import { Dictionary, groupBy, uniq } from 'lodash';
+import { Dictionary, chain, groupBy, uniq } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { FilteredSchoolDetails } from 'src/app/timetable/school-filter/school-filter.component';
-import { DbTimetable, DbTimetableLesson, DbTimetableStaff, DbTimetableSubject, SchoolFilterService } from 'src/app/timetable/school-filter/school-filter.service';
+import { DbTimetable, DbTimetableClass, DbTimetableLesson, DbTimetableStaff, DbTimetableSubject, SchoolFilterService } from 'src/app/timetable/school-filter/school-filter.service';
 
 @Component({
   selector: 'app-view-timetable',
@@ -18,8 +18,6 @@ export class ViewTimetableComponent implements OnInit {
 
   isLoading: boolean = false;
   dbTimetable !:DbTimetable
-  dbTimetableClasses :string[] = [];
-  dbTimetableStartTimes :string[] = [];
    DayOfWeek = DayOfWeek
 
    isEdit:boolean = false;
@@ -33,16 +31,32 @@ export class ViewTimetableComponent implements OnInit {
 
 
 
-    groupByClassName(dbTimetableLessons:DbTimetableLesson[]):Dictionary<DbTimetableLesson[]>|undefined{
-     const dictionary:Dictionary<DbTimetableLesson[]> = groupBy(dbTimetableLessons , (dbTimetableLesson:DbTimetableLesson) => dbTimetableLesson.schoolClass.name)
-
-     return dictionary;
-    }
-
-    groupByStarTime(dbTimetableLessons:DbTimetableLesson[]):Dictionary<DbTimetableLesson[]>|undefined{
-      const dictionary:Dictionary<DbTimetableLesson[]> = groupBy(dbTimetableLessons , (dbTimetableLesson:DbTimetableLesson) => dbTimetableLesson.startTime)
-      return dictionary;
+    filterByClassName(dbTimetableLessons:DbTimetableLesson[] , schoolClassName:string):DbTimetableLesson[]{
+      return dbTimetableLessons.filter(dbTimetableLesson => dbTimetableLesson.schoolClass.name == schoolClassName);
      }
+
+     filterClassTimes(dbTimetableLessons:DbTimetableLesson[] , schoolClassName:string):{startTime:string,endTime:string}[]{
+      return chain(dbTimetableLessons)
+      .filter(dbTimetableLesson => dbTimetableLesson.schoolClass.name.toLowerCase() == schoolClassName.toLowerCase())
+      .uniqBy(dbTimetableLesson => dbTimetableLesson.startTime)
+      .map(dbTimetableLesson => ({startTime:dbTimetableLesson.startTime , endTime:dbTimetableLesson.endTime}))
+      .value()
+     }
+
+
+
+
+     filterByStarTime(dbTimetableLessons:DbTimetableLesson[] , startTime:string):DbTimetableLesson[]{
+      return dbTimetableLessons.filter(dbTimetableLesson => dbTimetableLesson.startTime == startTime);
+     }
+
+
+     findByWeekDay(dbTimetableLessons:DbTimetableLesson[] , dayOfWeek:DayOfWeek):DbTimetableLesson|undefined{
+      return dbTimetableLessons.find(dbTimetableLesson => dbTimetableLesson.lessonDay.toLocaleUpperCase() == dayOfWeek.name().toLocaleUpperCase());
+     }
+
+
+
 
      // get day lesson from time list
      getLessonByDayOfWeek(dbTimetableLessons:DbTimetableLesson[] , dayOfWeek:DayOfWeek):DbTimetableLesson|undefined{
@@ -63,6 +77,7 @@ export class ViewTimetableComponent implements OnInit {
 
 
 
+
     loadTimetable() {
        let params = new HttpParams().set("school" , this.filteredSchoolDetails?.school?.id as string).set("academicTerm" , this.filteredSchoolDetails?.term?.id as string)
       this.isLoading = true
@@ -71,9 +86,6 @@ export class ViewTimetableComponent implements OnInit {
         this.isLoading = false
         console.log("response " , response)
         this.dbTimetable = {... response.data}
-        const ttls = this.dbTimetable.lessons;
-        this.dbTimetableClasses = uniq(ttls.map(tl => tl.schoolClass.name)).sort()
-        this.dbTimetableStartTimes = uniq(ttls.map(tl => tl.startTime))
       },
       error:(error:HttpErrorResponse) => {
         this.isLoading = false
@@ -100,7 +112,7 @@ export class ViewTimetableComponent implements OnInit {
      const params = new HttpParams().set("timetable" , this.dbTimetable.id).set("schoolClass" , classLessons[0].schoolClass.id)
 
      const _$:Subscription =  this.schoolFilterService.updateSchoolClassTimetable(params , classLessons).subscribe({
-      next:response => {
+      next:_response => {
         // console.log(response)
         this.isUpdating = false;
         this.toastr.success(`${classLessons[0].schoolClass.name} Timetable updated successfully`)

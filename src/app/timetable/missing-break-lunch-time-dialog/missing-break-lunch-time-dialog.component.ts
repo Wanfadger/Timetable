@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalTime } from '@js-joda/core';
+import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
 
 @Component({
   selector: 'app-missing-break-lunch-time-dialog',
@@ -25,6 +26,8 @@ export class MissingBreakLunchTimeDialogComponent implements OnInit {
       lunchTime: [null, [Validators.required]]
     })
 
+    console.log(this.formGroup.get('breakTime'))
+
     this.formGroup.get("breakTime")?.valueChanges.subscribe((breakTime: TimeRange) => {
       console.log(breakTime)
       const lunchTime = this.formGroup.get("lunchTime")?.value as TimeRange
@@ -40,6 +43,7 @@ export class MissingBreakLunchTimeDialogComponent implements OnInit {
     })
 
     this.formGroup.get("lunchTime")?.valueChanges.subscribe((lunchTime: TimeRange) => {
+      console.log(lunchTime)
       const breakTime = this.formGroup.get("breakTime")?.value as TimeRange;
       if (lunchTime) {
         // BREAK CANNOT BE AFTER LUNCH TIME
@@ -56,7 +60,7 @@ export class MissingBreakLunchTimeDialogComponent implements OnInit {
 
 
   compareWith(a:TimeRange , b:TimeRange){
-    return a&&b ? a.startTime === b.startTime : a === b
+    return a&&b ? a.startTime.format(TelaTimetablePattern) == b.startTime.format(TelaTimetablePattern) : a == b
   }
 
   getBreakTimes(times:TimeRange[]){
@@ -76,7 +80,8 @@ export class MissingBreakLunchTimeDialogComponent implements OnInit {
   }
 
   done() {
-    this.dialogRef.close({b:this.formData.breakTime as TimeRange , l:this.formData.lunchTime as TimeRange})
+    console.log('data ' , this.formData)
+    //this.dialogRef.close({b:this.formData.breakTime as TimeRange , l:this.formData.lunchTime as TimeRange})
   }
 
 }

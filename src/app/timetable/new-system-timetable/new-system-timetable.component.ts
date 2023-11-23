@@ -1,5 +1,5 @@
 
-import { DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson } from 'src/app/timetable/school-filter/school-filter.service';
+import { DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson, TEST_LESSONS } from 'src/app/timetable/school-filter/school-filter.service';
 import { DbTimetableClass } from './../school-filter/school-filter.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -98,7 +98,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
   generateTimetable() {
     console.log('s ', this.classStartEndBreakLunchTime.classStartTime, ' e ', this.classStartEndBreakLunchTime.classEndTime)
-    this.startEndTimeRanges = this.generateTimetablePeriods(this.classStartEndBreakLunchTime.classStartTime as LocalTime, this.classStartEndBreakLunchTime.classEndTime as LocalTime,
+    this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime , TelaTimetablePattern),LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
       this.classStartEndBreakLunchTime.duration)
   }
 
@@ -108,7 +108,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
     let startTimeString: string = startTime.format(TelaTimetablePattern)
-    while (LocalTime.parse(startTimeString).isBefore(endTime) || LocalTime.parse(startTimeString).equals(endTime)) {
+    while (LocalTime.parse(startTimeString).isBefore(endTime)) {
       let timerange: TimeRange = { startTime: LocalTime.parse(startTimeString), endTime: LocalTime.now() } // set start time
       startTimeString = LocalTime.parse(startTimeString).plusMinutes(duration).format(TelaTimetablePattern)
       timerange.endTime = LocalTime.parse(startTimeString) // set end time
@@ -164,12 +164,12 @@ export class NewSystemTimetableComponent implements OnInit {
         subject: null,
         schoolStaff: staff,
         duration:this.classStartEndBreakLunchTime.duration,
-        breakStartTime:(<LocalTime> this.classStartEndBreakLunchTime.breakStartTime).format(TelaTimetablePattern),
-        breakEndTime:(<LocalTime> this.classStartEndBreakLunchTime.breakEndTime).format(TelaTimetablePattern),
-        lunchStartTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchStartTime).format(TelaTimetablePattern),
-        lunchEndTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchEndTime).format(TelaTimetablePattern),
-        classStartTime:(<LocalTime> this.classStartEndBreakLunchTime.classStartTime).format(TelaTimetablePattern),
-        classEndTime:(<LocalTime> this.classStartEndBreakLunchTime.classEndTime).format(TelaTimetablePattern),
+        breakStartTime:this.classStartEndBreakLunchTime.breakStartTime,
+        breakEndTime:this.classStartEndBreakLunchTime.breakEndTime,
+        lunchStartTime:this.classStartEndBreakLunchTime.lunchStartTime,
+        lunchEndTime:this.classStartEndBreakLunchTime.lunchEndTime,
+        classStartTime:this.classStartEndBreakLunchTime.classStartTime,
+        classEndTime:this.classStartEndBreakLunchTime.classEndTime,
       }
       // this.newTimetable.lessons.push(lesson)
       this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
@@ -213,12 +213,12 @@ export class NewSystemTimetableComponent implements OnInit {
         subject: subject,
         schoolStaff: null,
         duration:this.classStartEndBreakLunchTime.duration,
-        breakStartTime:(<LocalTime> this.classStartEndBreakLunchTime.breakStartTime).format(TelaTimetablePattern),
-        breakEndTime:(<LocalTime> this.classStartEndBreakLunchTime.breakEndTime).format(TelaTimetablePattern),
-        lunchStartTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchStartTime).format(TelaTimetablePattern),
-        lunchEndTime:(<LocalTime> this.classStartEndBreakLunchTime.lunchEndTime).format(TelaTimetablePattern),
-        classStartTime:(<LocalTime> this.classStartEndBreakLunchTime.classStartTime).format(TelaTimetablePattern),
-        classEndTime:(<LocalTime> this.classStartEndBreakLunchTime.classEndTime).format(TelaTimetablePattern),
+        breakStartTime:this.classStartEndBreakLunchTime.breakStartTime,
+        breakEndTime:this.classStartEndBreakLunchTime.breakEndTime,
+        lunchStartTime:this.classStartEndBreakLunchTime.lunchStartTime,
+        lunchEndTime:this.classStartEndBreakLunchTime.lunchEndTime,
+        classStartTime:this.classStartEndBreakLunchTime.classStartTime,
+        classEndTime:this.classStartEndBreakLunchTime.classEndTime,
       }
       // this.newTimetable.lessons.push(lesson)
       this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
