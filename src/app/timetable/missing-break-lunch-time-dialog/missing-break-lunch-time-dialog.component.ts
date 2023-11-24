@@ -27,13 +27,13 @@ export class MissingBreakLunchTimeDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.lunchTimes.length <= 0) {
-      console.log("no lunch")
+      // console.log("no lunch")
      this.lunchTimeControl = new FormControl(null)
     }
   }
 
   onLunchChange(event: MatSelectChange) {
-    console.log(event.value)
+    // console.log(event.value)
     const lunchTimes = event.value as TimeRange[];
     // console.log(lunchTime)
     const breakTime = this.breakTimeControl.value as TimeRange;
