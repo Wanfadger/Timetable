@@ -84,7 +84,7 @@ export class ViewTimetableComponent implements OnInit {
      const _$:Subscription =  this.schoolFilterService.loadTimetable(params).subscribe({
       next:response => {
         this.isLoading = false
-        console.log("response " , response)
+        // console.log("response " , response)
         this.dbTimetable = {... response.data}
       },
       error:(error:HttpErrorResponse) => {
