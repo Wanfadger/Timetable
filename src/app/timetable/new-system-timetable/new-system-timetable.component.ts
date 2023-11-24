@@ -106,21 +106,67 @@ export class NewSystemTimetableComponent implements OnInit {
 
   generateTimetable() {
     // console.log('s ', this.classStartEndBreakLunchTime.classStartTime, ' e ', this.classStartEndBreakLunchTime.classEndTime)
-    this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime,
-      TelaTimetablePattern), LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
-      this.classStartEndBreakLunchTime.duration)
+    this.startEndTimeRanges = this.generateTimetablePeriods2(this.classStartEndBreakLunchTime)
   }
 
   isBreakLunchTime(timeRange: TimeRange, csebt: ClassStartEndBreakLunchTime): boolean {
-    const breakRange:TimeRange = {startTime: LocalTime.parse(csebt.breakStartTime , TelaTimetablePattern) , endTime: LocalTime.parse(csebt.breakEndTime , TelaTimetablePattern)}
-    const lunchRange:TimeRange = {startTime: LocalTime.parse(csebt.lunchStartTime , TelaTimetablePattern) , endTime: LocalTime.parse(csebt.lunchEndTime , TelaTimetablePattern)}
-    return [breakRange , lunchRange].includes(timeRange)
+    const breakRange: TimeRange = { startTime: LocalTime.parse(csebt.breakStartTime, TelaTimetablePattern), endTime: LocalTime.parse(csebt.breakEndTime, TelaTimetablePattern) }
+    const lunchRange: TimeRange = { startTime: LocalTime.parse(csebt.lunchStartTime, TelaTimetablePattern), endTime: LocalTime.parse(csebt.lunchEndTime, TelaTimetablePattern) }
+    return [breakRange, lunchRange].includes(timeRange)
+  }
+
+  generateTimetablePeriods2(CSEBLT: ClassStartEndBreakLunchTime) {
+
+    let beforeBreak: TimeRange[] = []
+    let afterBreakBeforeLunch: TimeRange[] = []
+    let afterLunchBeforeEndOfDay: TimeRange[] = []
+
+    // if startTime is equal to breakTIME , offset current to next break time
+
+    // AFTER DAY START BEFORE BREAK
+
+    let beforeBreakStartTimeString: string = CSEBLT.classStartTime // startTime.format(TelaTimetablePattern)
+    while (LocalTime.parse(beforeBreakStartTimeString , TelaTimetablePattern).isBefore(LocalTime.parse(CSEBLT.breakStartTime , TelaTimetablePattern))) {
+      let timerange: TimeRange = { startTime: LocalTime.parse(beforeBreakStartTimeString , TelaTimetablePattern), endTime: LocalTime.now() } // set start time
+      beforeBreakStartTimeString = LocalTime.parse(beforeBreakStartTimeString , TelaTimetablePattern).plusMinutes(CSEBLT.duration).format(TelaTimetablePattern) //end time
+      timerange.endTime = LocalTime.parse(beforeBreakStartTimeString , TelaTimetablePattern) // set end time
+      beforeBreak.push(timerange)
+    }
+    // console.log('beforeBreak ' , beforeBreak)
+
+
+
+    /// After BREAK BEFORE LUNCH
+    let afterBreakBeforeLunchTimeString: string = CSEBLT.breakEndTime // startTime.format(TelaTimetablePattern)
+    while (LocalTime.parse(afterBreakBeforeLunchTimeString, TelaTimetablePattern).isBefore(LocalTime.parse(CSEBLT.lunchStartTime, TelaTimetablePattern))) {
+      let timerange: TimeRange = { startTime: LocalTime.parse(afterBreakBeforeLunchTimeString, TelaTimetablePattern), endTime: LocalTime.now() } // set start time
+      afterBreakBeforeLunchTimeString = LocalTime.parse(afterBreakBeforeLunchTimeString, TelaTimetablePattern).plusMinutes(CSEBLT.duration).format(TelaTimetablePattern) //end time
+      timerange.endTime = LocalTime.parse(afterBreakBeforeLunchTimeString, TelaTimetablePattern) // set end time
+      afterBreakBeforeLunch.push(timerange)
+    }
+    // console.log('afterBreakBeforeLunch ' , afterBreakBeforeLunch)
+
+
+    /// After LUNCH BEFORE END OF DAY
+    let afterLunchBeforeEndOfDayTimeString: string = CSEBLT.lunchEndTime // startTime.format(TelaTimetablePattern)
+    while (LocalTime.parse(afterLunchBeforeEndOfDayTimeString, TelaTimetablePattern).isBefore(LocalTime.parse(CSEBLT.classEndTime, TelaTimetablePattern))) {
+      let timerange: TimeRange = { startTime: LocalTime.parse(afterLunchBeforeEndOfDayTimeString, TelaTimetablePattern), endTime: LocalTime.now() } // set start time
+      afterLunchBeforeEndOfDayTimeString = LocalTime.parse(afterLunchBeforeEndOfDayTimeString, TelaTimetablePattern).plusMinutes(CSEBLT.duration).format(TelaTimetablePattern) //end time
+      timerange.endTime = LocalTime.parse(afterLunchBeforeEndOfDayTimeString, TelaTimetablePattern) // set end time
+      afterLunchBeforeEndOfDay.push(timerange)
+    }
+    // console.log('afterLunchBeforeEndOfDay ' , afterLunchBeforeEndOfDay)
+
+    return [... beforeBreak , ... afterBreakBeforeLunch , ... afterLunchBeforeEndOfDay]
+
   }
 
 
-  generateTimetablePeriods(startTime: LocalTime, endTime: LocalTime, duration: number) {
+
+  generateTimetablePeriodss(startTime: LocalTime, endTime: LocalTime, duration: number) {
     let periods: TimeRange[] = []
 
+    // if startTime is equal to breakTIME , offset current to next break time
 
     let startTimeString: string = startTime.format(TelaTimetablePattern)
     while (LocalTime.parse(startTimeString).isBefore(endTime)) {
@@ -135,7 +181,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
     // check if break and lunch time are selected
-    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => this.isBreakLunchTime(period , this.classStartEndBreakLunchTime))
+    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => this.isBreakLunchTime(period, this.classStartEndBreakLunchTime))
 
     if (parrtions[0].length <= 0) {
       let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent, { disableClose: true, data: periods });
@@ -144,7 +190,7 @@ export class NewSystemTimetableComponent implements OnInit {
         // console.log('Dialog result:', result); // Pizza!
         if (result) {
           if (result.l) {
-             const selectedPeriods:TimeRange[] = [...result.l , result.b]
+            const selectedPeriods: TimeRange[] = [...result.l, result.b]
             periods = periods.filter(ttr => !(selectedPeriods.includes(ttr)))
             this.selectedLunchTimes = result.l
           } else {
