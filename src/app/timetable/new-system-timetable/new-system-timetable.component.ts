@@ -14,6 +14,7 @@ import { partition, includes } from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
 import { MissingBreakLunchTimeDialogComponent } from '../missing-break-lunch-time-dialog/missing-break-lunch-time-dialog.component';
 import { Subscription } from 'rxjs';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-new-system-timetable',
@@ -21,7 +22,6 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./new-system-timetable.component.scss']
 })
 export class NewSystemTimetableComponent implements OnInit {
-
 
   filteredSchoolDetails: FilteredSchoolDetails | null = null
   // startTimeControl: FormControl = new FormControl(LocalTime.of(8, 0).format(TelaTimetablePattern));
@@ -100,14 +100,18 @@ export class NewSystemTimetableComponent implements OnInit {
 
   }
 
+  selectedTabChange(_event: MatTabChangeEvent) {
+    this.newTimetable.lessons = []
+  }
+
   generateTimetable() {
-    console.log('s ', this.classStartEndBreakLunchTime.classStartTime, ' e ', this.classStartEndBreakLunchTime.classEndTime)
-    this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime ,
-      TelaTimetablePattern),LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
+    // console.log('s ', this.classStartEndBreakLunchTime.classStartTime, ' e ', this.classStartEndBreakLunchTime.classEndTime)
+    this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime,
+      TelaTimetablePattern), LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
       this.classStartEndBreakLunchTime.duration)
   }
 
-  isTimeBetween(time:LocalTime , startTime: LocalTime, endTime: LocalTime): boolean {
+  isTimeBetween(time: LocalTime, startTime: LocalTime, endTime: LocalTime): boolean {
     return (time.isAfter(startTime) || time.equals(startTime)) && (time.isBefore(endTime))
   }
 
@@ -130,22 +134,22 @@ export class NewSystemTimetableComponent implements OnInit {
 
     // check if break and lunch time are selected
     const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period =>
-      this.isTimeBetween(period.startTime , LocalTime.parse(this.classStartEndBreakLunchTime.breakStartTime , TelaTimetablePattern) , LocalTime.parse(this.classStartEndBreakLunchTime.breakEndTime , TelaTimetablePattern) )
+      this.isTimeBetween(period.startTime, LocalTime.parse(this.classStartEndBreakLunchTime.breakStartTime, TelaTimetablePattern), LocalTime.parse(this.classStartEndBreakLunchTime.breakEndTime, TelaTimetablePattern))
       ||
-      this.isTimeBetween(period.startTime , LocalTime.parse(this.classStartEndBreakLunchTime.lunchStartTime , TelaTimetablePattern) , LocalTime.parse(this.classStartEndBreakLunchTime.lunchEndTime , TelaTimetablePattern) )
-      )
+      this.isTimeBetween(period.startTime, LocalTime.parse(this.classStartEndBreakLunchTime.lunchStartTime, TelaTimetablePattern), LocalTime.parse(this.classStartEndBreakLunchTime.lunchEndTime, TelaTimetablePattern))
+    )
 
     if (parrtions[0].length <= 0) {
       let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent, { disableClose: true, data: periods });
 
-      dialogRef.afterClosed().subscribe((result: { b: TimeRange, l: TimeRange[]|null }) => {
+      dialogRef.afterClosed().subscribe((result: { b: TimeRange, l: TimeRange[] | null }) => {
         // console.log('Dialog result:', result); // Pizza!
         if (result) {
-          if(result.l){
-            periods =   periods.filter(ttr => !(ttr == result.b || (<TimeRange[]>result.l).includes(ttr)))
+          if (result.l) {
+            periods = periods.filter(ttr => !(ttr == result.b || (<TimeRange[]>result.l).includes(ttr)))
             this.selectedLunchTimes = result.l
-          }else{
-            periods =   periods.filter(ttr => !(ttr == result.b))
+          } else {
+            periods = periods.filter(ttr => !(ttr == result.b))
           }
 
           this.startEndTimeRanges = periods
@@ -194,13 +198,13 @@ export class NewSystemTimetableComponent implements OnInit {
         schoolClass: schoolClass,
         subject: null,
         schoolStaff: staff,
-        duration:this.classStartEndBreakLunchTime.duration,
-        breakStartTime:this.classStartEndBreakLunchTime.breakStartTime,
-        breakEndTime:this.classStartEndBreakLunchTime.breakEndTime,
-        lunchStartTime:this.classStartEndBreakLunchTime.lunchStartTime,
-        lunchEndTime:this.classStartEndBreakLunchTime.lunchEndTime,
-        classStartTime:this.classStartEndBreakLunchTime.classStartTime,
-        classEndTime:this.classStartEndBreakLunchTime.classEndTime,
+        duration: this.classStartEndBreakLunchTime.duration,
+        breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
+        breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
+        lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
+        lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
+        classStartTime: this.classStartEndBreakLunchTime.classStartTime,
+        classEndTime: this.classStartEndBreakLunchTime.classEndTime,
       }
       // this.newTimetable.lessons.push(lesson)
       this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
@@ -214,7 +218,7 @@ export class NewSystemTimetableComponent implements OnInit {
       })
     }
 
-    console.log(this.newTimetable.lessons)
+    // console.log(this.newTimetable.lessons)
 
   }
 
@@ -243,13 +247,13 @@ export class NewSystemTimetableComponent implements OnInit {
         schoolClass: schoolClass,
         subject: subject,
         schoolStaff: null,
-        duration:this.classStartEndBreakLunchTime.duration,
-        breakStartTime:this.classStartEndBreakLunchTime.breakStartTime,
-        breakEndTime:this.classStartEndBreakLunchTime.breakEndTime,
-        lunchStartTime:this.classStartEndBreakLunchTime.lunchStartTime,
-        lunchEndTime:this.classStartEndBreakLunchTime.lunchEndTime,
-        classStartTime:this.classStartEndBreakLunchTime.classStartTime,
-        classEndTime:this.classStartEndBreakLunchTime.classEndTime,
+        duration: this.classStartEndBreakLunchTime.duration,
+        breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
+        breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
+        lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
+        lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
+        classStartTime: this.classStartEndBreakLunchTime.classStartTime,
+        classEndTime: this.classStartEndBreakLunchTime.classEndTime,
       }
       // this.newTimetable.lessons.push(lesson)
       this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
@@ -276,7 +280,7 @@ export class NewSystemTimetableComponent implements OnInit {
     // console.log('someInvalid: ', someInvalid)
     if ((someInvalid.length > 0 || this.newTimetable.lessons.length == 0 || this.newTimetable.lessons.length < (this.startEndTimeRanges.length * 5))) {
       this.toastr.warning(`Timetable invalid lessons on
-       ${someInvalid.map(l => `${l.lessonDay} @ ${l.startTime} - ${l.endTime}` )}\
+       ${someInvalid.map(l => `${l.lessonDay} @ ${l.startTime} - ${l.endTime}`)}\
        Reselect to fix
       `)
     } else {

@@ -6,7 +6,7 @@
 
 <section id="table">
 
-  <mat-tab-group mat-align-tabs="start">
+  <mat-tab-group mat-align-tabs="start" (selectedTabChange)="selectedTabChange($event)">
     <mat-tab [label]="schoolClass.name" *ngFor="let schoolClass of filteredSchoolDetails?.schoolClasses||[]">
       <ng-template matTabContent>
         <div class="flex justify-between items-center mx-4 mt-1">
