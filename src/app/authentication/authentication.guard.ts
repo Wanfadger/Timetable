@@ -11,7 +11,7 @@ export const AuthenticationGuard = (_route: ActivatedRouteSnapshot, _state: Rout
   if(authService.Token){
     return true;
   }else{
-    router.navigate(['/Auth'])
+    router.navigate(['/LogIn'])
     return false;
   }
 }
