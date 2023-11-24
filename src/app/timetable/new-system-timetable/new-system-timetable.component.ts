@@ -111,8 +111,10 @@ export class NewSystemTimetableComponent implements OnInit {
       this.classStartEndBreakLunchTime.duration)
   }
 
-  isTimeBetween(time: LocalTime, startTime: LocalTime, endTime: LocalTime): boolean {
-    return (time.isAfter(startTime) || time.equals(startTime)) && (time.isBefore(endTime))
+  isBreakLunchTime(timeRange: TimeRange, csebt: ClassStartEndBreakLunchTime): boolean {
+    const breakRange:TimeRange = {startTime: LocalTime.parse(csebt.breakStartTime , TelaTimetablePattern) , endTime: LocalTime.parse(csebt.breakEndTime , TelaTimetablePattern)}
+    const lunchRange:TimeRange = {startTime: LocalTime.parse(csebt.lunchStartTime , TelaTimetablePattern) , endTime: LocalTime.parse(csebt.lunchEndTime , TelaTimetablePattern)}
+    return [breakRange , lunchRange].includes(timeRange)
   }
 
 
@@ -133,11 +135,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
     // check if break and lunch time are selected
-    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period =>
-      this.isTimeBetween(period.startTime, LocalTime.parse(this.classStartEndBreakLunchTime.breakStartTime, TelaTimetablePattern), LocalTime.parse(this.classStartEndBreakLunchTime.breakEndTime, TelaTimetablePattern))
-      ||
-      this.isTimeBetween(period.startTime, LocalTime.parse(this.classStartEndBreakLunchTime.lunchStartTime, TelaTimetablePattern), LocalTime.parse(this.classStartEndBreakLunchTime.lunchEndTime, TelaTimetablePattern))
-    )
+    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => this.isBreakLunchTime(period , this.classStartEndBreakLunchTime))
 
     if (parrtions[0].length <= 0) {
       let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent, { disableClose: true, data: periods });
@@ -146,7 +144,8 @@ export class NewSystemTimetableComponent implements OnInit {
         // console.log('Dialog result:', result); // Pizza!
         if (result) {
           if (result.l) {
-            periods = periods.filter(ttr => !(ttr == result.b || (<TimeRange[]>result.l).includes(ttr)))
+             const selectedPeriods:TimeRange[] = [...result.l , result.b]
+            periods = periods.filter(ttr => !(selectedPeriods.includes(ttr)))
             this.selectedLunchTimes = result.l
           } else {
             periods = periods.filter(ttr => !(ttr == result.b))
@@ -161,7 +160,7 @@ export class NewSystemTimetableComponent implements OnInit {
           // this.classStartEndBreakLunchTime.duration)
 
         } else {
-          periods = []
+          this.startEndTimeRanges = []
         }
       });
 
@@ -267,7 +266,7 @@ export class NewSystemTimetableComponent implements OnInit {
       })
     }
 
-    console.log(this.newTimetable.lessons)
+    // console.log(this.newTimetable.lessons)
   }
 
 
