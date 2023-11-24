@@ -12,6 +12,10 @@ import { MatSelectChange } from '@angular/material/select';
   templateUrl: './missing-break-lunch-time-dialog.component.html',
   styleUrls: ['./missing-break-lunch-time-dialog.component.scss']
 })
+
+/**
+ * @deprecated
+ */
 export class MissingBreakLunchTimeDialogComponent implements OnInit {
 
 
