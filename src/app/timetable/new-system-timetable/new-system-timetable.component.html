@@ -93,12 +93,12 @@
 
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
-                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="monSubAuto">
                     <button matSuffix mat-icon-button aria-label="Clear">
                       <mat-icon>arrow_drop_down</mat-icon>
                     </button>
 
-                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                    <mat-autocomplete #monSubAuto="matAutocomplete" [displayWith]="displaySubjectCode"
                       (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)">
                       <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
                         {{subject.code}}
@@ -129,12 +129,12 @@
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
-                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="monStaffAuto">
                       <button matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>arrow_drop_down</mat-icon>
                       </button>
 
-                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                      <mat-autocomplete #monStaffAuto="matAutocomplete" [displayWith]="displayStaffName"
                         (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)">
                         <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
                           {{staff.firstName}} {{staff.lastName}}
@@ -167,12 +167,12 @@
                   </mat-form-field> -->
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
-                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="tueSubAuto">
                     <button matSuffix mat-icon-button aria-label="Clear">
                       <mat-icon>arrow_drop_down</mat-icon>
                     </button>
 
-                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                    <mat-autocomplete #tueSubAuto="matAutocomplete" [displayWith]="displaySubjectCode"
                       (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)">
                       <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
                         {{subject.code}}
@@ -202,12 +202,12 @@
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
-                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="tueStaffAuto">
                       <button matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>arrow_drop_down</mat-icon>
                       </button>
 
-                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                      <mat-autocomplete #tueStaffAuto="matAutocomplete" [displayWith]="displayStaffName"
                         (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)">
                         <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
                           {{staff.firstName}} {{staff.lastName}}
@@ -241,12 +241,12 @@
 
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
-                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="wedSubAuto">
                     <button matSuffix mat-icon-button aria-label="Clear">
                       <mat-icon>arrow_drop_down</mat-icon>
                     </button>
 
-                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                    <mat-autocomplete #wedSubAuto="matAutocomplete" [displayWith]="displaySubjectCode"
                       (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)">
                       <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
                         {{subject.code}}
@@ -277,12 +277,12 @@
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
-                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="wedStaffAuto">
                       <button matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>arrow_drop_down</mat-icon>
                       </button>
 
-                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                      <mat-autocomplete #wedStaffAuto="matAutocomplete" [displayWith]="displayStaffName"
                         (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)">
                         <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
                           {{staff.firstName}} {{staff.lastName}}
@@ -316,12 +316,12 @@
 
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
-                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="thurSubAuto">
                     <button matSuffix mat-icon-button aria-label="Clear">
                       <mat-icon>arrow_drop_down</mat-icon>
                     </button>
 
-                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                    <mat-autocomplete #thurSubAuto="matAutocomplete" [displayWith]="displaySubjectCode"
                       (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)">
                       <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
                         {{subject.code}}
@@ -352,12 +352,12 @@
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
-                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="thurStaffAuto">
                       <button matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>arrow_drop_down</mat-icon>
                       </button>
 
-                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                      <mat-autocomplete #thurStaffAuto="matAutocomplete" [displayWith]="displayStaffName"
                         (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)">
                         <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
                           {{staff.firstName}} {{staff.lastName}}
@@ -392,12 +392,12 @@
 
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
-                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="friSubAuto">
                     <button matSuffix mat-icon-button aria-label="Clear">
                       <mat-icon>arrow_drop_down</mat-icon>
                     </button>
 
-                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                    <mat-autocomplete #friSubAuto="matAutocomplete" [displayWith]="displaySubjectCode"
                       (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)">
                       <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
                         {{subject.code}}
@@ -428,12 +428,12 @@
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
-                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="friStaffAuto">
                       <button matSuffix mat-icon-button aria-label="Clear">
                         <mat-icon>arrow_drop_down</mat-icon>
                       </button>
 
-                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                      <mat-autocomplete #friStaffAuto="matAutocomplete" [displayWith]="displayStaffName"
                         (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)">
                         <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
                           {{staff.firstName}} {{staff.lastName}}

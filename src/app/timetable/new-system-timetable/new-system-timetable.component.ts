@@ -159,11 +159,54 @@ export class NewSystemTimetableComponent implements OnInit {
   }
 
 
-  onStaffChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
+  // onStaffChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
+  //   const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
+  //   let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons.
+  //     find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
+  //   const staff: DbTimetableStaff = $event.value
+
+  //   if (lesson) {
+  //     // update
+  //     lesson.schoolStaff = staff
+  //   } else {
+  //     // create
+  //     lesson = {
+  //       id: null,
+  //       startTime: startTimeStr,
+  //       endTime: startEndTimeRange.endTime.format(TelaTimetablePattern),
+  //       lessonDay: dayOfWeek.name(),
+  //       schoolClass: schoolClass,
+  //       subject: null,
+  //       schoolStaff: staff,
+  //       duration: this.classStartEndBreakLunchTime.duration,
+  //       breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
+  //       breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
+  //       lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
+  //       lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
+  //       classStartTime: this.classStartEndBreakLunchTime.classStartTime,
+  //       classEndTime: this.classStartEndBreakLunchTime.classEndTime,
+  //     }
+  //     // this.newTimetable.lessons.push(lesson)
+  //     this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
+  //       if (a.startTime < b.startTime) {
+  //         return -1;
+  //       } else if (a.startTime > b.startTime) {
+  //         return 1
+  //       } else {
+  //         return 0;
+  //       }
+  //     })
+  //   }
+
+  //   console.log(this.newTimetable.lessons)
+
+  // }
+
+  onStaffChange2(event: MatAutocompleteSelectedEvent, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons.
       find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
-    const staff: DbTimetableStaff = $event.value
+    const staff: DbTimetableStaff = event.option.value
 
     if (lesson) {
       // update
@@ -198,107 +241,60 @@ export class NewSystemTimetableComponent implements OnInit {
       })
     }
 
-    console.log(this.newTimetable.lessons)
-
-  }
-
-  onStaffChange2($event: MatAutocompleteSelectedEvent, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
-    const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
-    let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons.
-      find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
-    const staff: DbTimetableStaff = $event.option.value
-
-    if (lesson) {
-      // update
-      lesson.schoolStaff = staff
-    } else {
-      // create
-      lesson = {
-        id: null,
-        startTime: startTimeStr,
-        endTime: startEndTimeRange.endTime.format(TelaTimetablePattern),
-        lessonDay: dayOfWeek.name(),
-        schoolClass: schoolClass,
-        subject: null,
-        schoolStaff: staff,
-        duration: this.classStartEndBreakLunchTime.duration,
-        breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
-        breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
-        lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
-        lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
-        classStartTime: this.classStartEndBreakLunchTime.classStartTime,
-        classEndTime: this.classStartEndBreakLunchTime.classEndTime,
-      }
-      // this.newTimetable.lessons.push(lesson)
-      this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
-        if (a.startTime < b.startTime) {
-          return -1;
-        } else if (a.startTime > b.startTime) {
-          return 1
-        } else {
-          return 0;
-        }
-      })
-    }
-
-    console.log(this.newTimetable.lessons)
+    // console.log('timetable ' , this.newTimetable.lessons)
 
   }
 
   getLesson(startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass): NewDbTimetableLesson | undefined {
-
-    console.log("getLesson " , " " , dayOfWeek);
-
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     // what makes a lesson unique
     // time , class , days
-    const lesson:NewDbTimetableLesson|undefined = this.newTimetable.lessons
+    return this.newTimetable.lessons
     .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
-    // console.log('lesson ' , lesson)
-    return lesson
+
   }
 
-  onSubjectChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
-    const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
-    let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons
-      .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
-    const subject: DbTimetableSubject = $event.value
+  // onSubjectChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
+  //   const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
+  //   let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons
+  //     .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
+  //   const subject: DbTimetableSubject = $event.value
 
-    if (lesson) {
-      // update
-      lesson.subject = subject
-    } else {
-      // create
-      lesson = {
-        id: null,
-        startTime: startTimeStr,
-        endTime: startEndTimeRange.endTime.format(TelaTimetablePattern),
-        lessonDay: dayOfWeek.name(),
-        schoolClass: schoolClass,
-        subject: subject,
-        schoolStaff: null,
-        duration: this.classStartEndBreakLunchTime.duration,
-        breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
-        breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
-        lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
-        lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
-        classStartTime: this.classStartEndBreakLunchTime.classStartTime,
-        classEndTime: this.classStartEndBreakLunchTime.classEndTime,
-      }
-      // this.newTimetable.lessons.push(lesson)
-      this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
-        if (a.startTime < b.startTime) {
-          return -1;
-        } else if (a.startTime > b.startTime) {
-          return 1
-        } else {
-          return 0;
-        }
-      })
-    }
+  //   if (lesson) {
+  //     // update
+  //     lesson.subject = subject
+  //   } else {
+  //     // create
+  //     lesson = {
+  //       id: null,
+  //       startTime: startTimeStr,
+  //       endTime: startEndTimeRange.endTime.format(TelaTimetablePattern),
+  //       lessonDay: dayOfWeek.name(),
+  //       schoolClass: schoolClass,
+  //       subject: subject,
+  //       schoolStaff: null,
+  //       duration: this.classStartEndBreakLunchTime.duration,
+  //       breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
+  //       breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
+  //       lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
+  //       lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
+  //       classStartTime: this.classStartEndBreakLunchTime.classStartTime,
+  //       classEndTime: this.classStartEndBreakLunchTime.classEndTime,
+  //     }
+  //     // this.newTimetable.lessons.push(lesson)
+  //     this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
+  //       if (a.startTime < b.startTime) {
+  //         return -1;
+  //       } else if (a.startTime > b.startTime) {
+  //         return 1
+  //       } else {
+  //         return 0;
+  //       }
+  //     })
+  //   }
 
-    console.log(this.newTimetable.lessons)
-  }
+  //   console.log(this.newTimetable.lessons)
+  // }
 
   showAllSubjects() {
     this.filteredSubjectOptions$ = of(this.filteredSchoolDetails?.subjects||[])
@@ -308,7 +304,15 @@ export class NewSystemTimetableComponent implements OnInit {
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons
       .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
-    const subject: DbTimetableSubject = $event.option.value
+
+      const subject: DbTimetableSubject = $event.option.value
+
+
+      // console.log('day ' , dayOfWeek)
+      // console.log('startEndTimeRange ' , startEndTimeRange)
+      // console.log('selected ' , subject)
+      // console.log('lesson ' , lesson)
+
 
 
     if (lesson) {
@@ -344,8 +348,9 @@ export class NewSystemTimetableComponent implements OnInit {
       })
     }
 
-    console.log(this.newTimetable.lessons)
+    // console.log('timetable ' , this.newTimetable.lessons)
   }
+
 
 
 
