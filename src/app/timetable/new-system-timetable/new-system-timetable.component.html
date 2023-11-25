@@ -16,7 +16,7 @@
 
             <div>
               <button type="button" mat-raised-button color="primary"
-                [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0 || isStartEndBreakLunchTimeInValid "
+                [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0 || isStartEndBreakLunchTimeInValid || isSaving"
                 (click)="generateTimetable()">Generate</button>
             </div>
           </div>
@@ -42,29 +42,9 @@
             </div>
           </div>
 
-          <!-- <form class="flex space-x-4">
-            <div class="space-x-2">
-              <label>Start Time</label>
-              <input type="time" class="form-input px-4 py-3 rounded-lg" id="startTime" [formControl]="startTimeControl">
-            </div>
-
-            <div class="space-x-2">
-              <label>End Time</label>
-              <input type="time" class="form-input px-4 py-3 rounded-lg" id="endTime" [formControl]="endTimeControl">
-            </div>
-
-            <div>
-              <label>Duraion per lesson/min</label>
-              <input type="number" min="0" class="form-input px-4 py-3 rounded-lg" id="duration"
-                [formControl]="durationControl">
-            </div>
-
-            <button type="button" mat-raised-button color="primary"
-              [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0"
-              (click)="generateTimetable()">Generate</button>
-
-          </form> -->
         </div>
+
+        <mat-progress-bar mode="indeterminate" *ngIf="isSaving"></mat-progress-bar>
 
         <table class="border-separate border-spacing-2 border border-slate-400 w-full">
 

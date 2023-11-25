@@ -51,53 +51,6 @@ export class NewSystemTimetableComponent implements OnInit {
   constructor(private router: Router, private toastr: ToastrService, private schoolFilterService: SchoolFilterService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
-
-    // this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.of(8, 0), LocalTime.of(17, 0), 40)
-
-    // this.startTimeControl.valueChanges
-    //   .pipe(distinctUntilChanged())
-    //   .subscribe(value => {
-    //     const startTime: LocalTime = LocalTime.parse(value)
-    //     const endTime: LocalTime = LocalTime.parse(this.endTimeControl.value)
-    //     if (startTime.isAfter(endTime)) {
-    //       this.toastr.warning("Start time cannot be greater than end time")
-    //       this.startTimeControl.patchValue(LocalTime.of(8, 0).format(TelaTimetablePattern))
-    //       return
-    //     }
-
-    //     //  this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, this.durationControl.value)
-    //     //  console.log(this.startEndRanges)
-    //   })
-
-
-    // this.endTimeControl.valueChanges
-    //   .pipe(distinctUntilChanged())
-    //   .subscribe(value => {
-    //     const endTime: LocalTime = LocalTime.parse(value)
-    //     const startTime: LocalTime = LocalTime.parse(this.startTimeControl.value)
-    //     if (endTime.isBefore(startTime)) {
-    //       this.toastr.warning("End time cannot be before start time")
-    //       this.startTimeControl.patchValue(LocalTime.of(17, 0).format(TelaTimetablePattern))
-    //       return
-    //     }
-    //     // this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, this.durationControl.value)
-    //     //  console.log(this.startEndRanges)
-    //   })
-
-    // this.durationControl.valueChanges
-    //   .pipe(distinctUntilChanged())
-    //   .subscribe(duration => {
-    //     const endTime: LocalTime = LocalTime.parse(this.endTimeControl.value)
-    //     const startTime: LocalTime = LocalTime.parse(this.startTimeControl.value)
-    //     if (endTime.isBefore(startTime)) {
-    //       this.toastr.warning("End time cannot be before start time")
-    //       this.startTimeControl.patchValue(LocalTime.of(17, 0).format(TelaTimetablePattern))
-    //       return
-    //     }
-    //     //this.startEndTimeRanges = this.generateTimetablePeriods(startTime, endTime, duration)
-    //     //  console.log(this.startEndRanges)
-    //   })
-
   }
 
   selectedTabChange(_event: MatTabChangeEvent) {
@@ -105,7 +58,6 @@ export class NewSystemTimetableComponent implements OnInit {
   }
 
   generateTimetable() {
-    // console.log('s ', this.classStartEndBreakLunchTime.classStartTime, ' e ', this.classStartEndBreakLunchTime.classEndTime)
     this.startEndTimeRanges = this.generateTimetablePeriods2(this.classStartEndBreakLunchTime)
   }
 
@@ -158,68 +110,6 @@ export class NewSystemTimetableComponent implements OnInit {
     // console.log('afterLunchBeforeEndOfDay ' , afterLunchBeforeEndOfDay)
 
     return [... beforeBreak , ... afterBreakBeforeLunch , ... afterLunchBeforeEndOfDay]
-
-  }
-
-
-
-  generateTimetablePeriodss(startTime: LocalTime, endTime: LocalTime, duration: number) {
-    let periods: TimeRange[] = []
-
-    // if startTime is equal to breakTIME , offset current to next break time
-
-    let startTimeString: string = startTime.format(TelaTimetablePattern)
-    while (LocalTime.parse(startTimeString).isBefore(endTime)) {
-      let timerange: TimeRange = { startTime: LocalTime.parse(startTimeString), endTime: LocalTime.now() } // set start time
-      startTimeString = LocalTime.parse(startTimeString).plusMinutes(duration).format(TelaTimetablePattern)
-      timerange.endTime = LocalTime.parse(startTimeString) // set end time
-      periods.push(timerange)
-    }
-
-    // console.log('periods 1 :', periods.length)
-    // console.log('periods 1 :', periods)
-
-
-    // check if break and lunch time are selected
-    const parrtions: [TimeRange[], TimeRange[]] = partition(periods, period => this.isBreakLunchTime(period, this.classStartEndBreakLunchTime))
-
-    if (parrtions[0].length <= 0) {
-      let dialogRef = this.dialog.open(MissingBreakLunchTimeDialogComponent, { disableClose: true, data: periods });
-
-      dialogRef.afterClosed().subscribe((result: { b: TimeRange, l: TimeRange[] | null }) => {
-        // console.log('Dialog result:', result); // Pizza!
-        if (result) {
-          if (result.l) {
-            const selectedPeriods: TimeRange[] = [...result.l, result.b]
-            periods = periods.filter(ttr => !(selectedPeriods.includes(ttr)))
-            this.selectedLunchTimes = result.l
-          } else {
-            periods = periods.filter(ttr => !(ttr == result.b))
-          }
-
-          this.startEndTimeRanges = periods
-          // console.log('periods 2 : ', periods.length)
-          // console.log('periods 2 : ', periods)
-
-          // this.startEndTimeRanges = this.generateTimetablePeriods(LocalTime.parse(this.classStartEndBreakLunchTime.classStartTime ,TelaTimetablePattern),
-          // LocalTime.parse(this.classStartEndBreakLunchTime.classEndTime, TelaTimetablePattern),
-          // this.classStartEndBreakLunchTime.duration)
-
-        } else {
-          this.startEndTimeRanges = []
-        }
-      });
-
-
-      return periods
-
-    } else {
-      return parrtions[1]
-    }
-
-    //  console.log('lunck '+LocalTime.parse(this.startEndBreakLunchTime.lunchStartTime))
-    //  console.log('Break periods ' , parrtions[0])
-    //  console.log('lesson ' , parrtions[1] )
 
   }
 
