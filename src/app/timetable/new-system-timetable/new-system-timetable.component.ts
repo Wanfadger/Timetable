@@ -95,13 +95,14 @@ export class NewSystemTimetableComponent implements OnInit {
 
   selectedTabChange(_event: MatTabChangeEvent) {
     this.newTimetable.lessons = []
-    this.staffControl.patchValue('')
-    this.subjectControl.patchValue('')
+    this.staffControl.patchValue(null)
+    this.subjectControl.patchValue(null)
   }
 
   generateTimetable() {
     this.newTimetable.lessons = []
     this.subjectControl.patchValue(null)
+    this.staffControl.patchValue(null)
     // console.log(this.newTimetable)
     this.startEndTimeRanges = this.generateTimetablePeriods2(this.classStartEndBreakLunchTime)
   }
