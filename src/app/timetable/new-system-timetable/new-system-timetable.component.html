@@ -2,8 +2,6 @@
   <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
 </section>
 
-
-
 <section id="table">
 
   <mat-tab-group mat-align-tabs="start" (selectedTabChange)="selectedTabChange($event)">
@@ -12,7 +10,8 @@
         <div class="flex justify-between items-center mx-4 mt-1">
           <div class="flex space-x-2 items-center">
             <app-start-end-break-lunch-time (classStartEndBreakLunchTimeData)="classStartEndBreakLunchTime = $event"
-              (isInValid)="isStartEndBreakLunchTimeInValid = $event" [selectedLunchTimes]="selectedLunchTimes" ></app-start-end-break-lunch-time>
+              (isInValid)="isStartEndBreakLunchTimeInValid = $event"
+              [selectedLunchTimes]="selectedLunchTimes"></app-start-end-break-lunch-time>
 
             <div>
               <button type="button" mat-raised-button color="primary"
@@ -25,7 +24,8 @@
           <div class="items-center">
             <div class="flex space-x-6 justify-end mr-8">
 
-              <button mat-icon-button color="primary" [disabled]="isSaving|| startEndTimeRanges.length <=0 ||newTimetable.lessons.length < (startEndTimeRanges.length * 5)"
+              <button mat-icon-button color="primary"
+                [disabled]="isSaving|| startEndTimeRanges.length <=0 ||newTimetable.lessons.length < (startEndTimeRanges.length * 5)"
                 [matTooltip]="'save timetableClass timetable changes'" (click)="saveUpdateClassTimetable()">
                 <mat-icon>check</mat-icon>
               </button>
@@ -80,7 +80,7 @@
                   </span>
 
 
-                  <mat-form-field appearance="outline" style="font-size: 10px;">
+                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                     <mat-label>Update Subject</mat-label>
                     <mat-select
                       (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)"
@@ -89,6 +89,21 @@
                         {{subject.code}}
                       </mat-option>
                     </mat-select>
+                  </mat-form-field> -->
+
+                  <mat-form-field appearance="outline">
+                    <mat-label> Select Subject</mat-label>
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <button matSuffix mat-icon-button aria-label="Clear">
+                      <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+
+                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                      (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)">
+                      <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
+                        {{subject.code}}
+                      </mat-option>
+                    </mat-autocomplete>
                   </mat-form-field>
                 </div>
 
@@ -101,7 +116,7 @@
                     </span>
 
 
-                    <mat-form-field appearance="outline" style="font-size: 10px;">
+                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                       <mat-label>Select Teacher</mat-label>
                       <mat-select
                         (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)"
@@ -110,6 +125,21 @@
                           {{staff.firstName}} {{staff.lastName}}
                         </mat-option>
                       </mat-select>
+                    </mat-form-field> -->
+
+                    <mat-form-field appearance="outline">
+                      <mat-label> Select Teacher</mat-label>
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <button matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                      </button>
+
+                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                        (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)">
+                        <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
+                          {{staff.firstName}} {{staff.lastName}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </mat-form-field>
 
                   </div>
@@ -125,7 +155,7 @@
                   </span>
 
 
-                  <mat-form-field appearance="outline" style="font-size: 10px;">
+                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                     <mat-label>Update Subject</mat-label>
                     <mat-select
                       (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)"
@@ -134,6 +164,20 @@
                         {{subject.code}}
                       </mat-option>
                     </mat-select>
+                  </mat-form-field> -->
+                  <mat-form-field appearance="outline">
+                    <mat-label> Select Subject</mat-label>
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <button matSuffix mat-icon-button aria-label="Clear">
+                      <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+
+                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                      (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)">
+                      <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
+                        {{subject.code}}
+                      </mat-option>
+                    </mat-autocomplete>
                   </mat-form-field>
                 </div>
 
@@ -145,7 +189,7 @@
                     </span>
 
 
-                    <mat-form-field appearance="outline" style="font-size: 10px;">
+                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                       <mat-label>Select Teacher</mat-label>
                       <mat-select
                         (selectionChange)="onStaffChange($event  , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)"
@@ -154,6 +198,21 @@
                           {{staff.firstName}} {{staff.lastName}}
                         </mat-option>
                       </mat-select>
+                    </mat-form-field> -->
+
+                    <mat-form-field appearance="outline">
+                      <mat-label> Select Teacher</mat-label>
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <button matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                      </button>
+
+                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                        (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)">
+                        <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
+                          {{staff.firstName}} {{staff.lastName}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </mat-form-field>
 
                   </div>
@@ -169,7 +228,7 @@
                   </span>
 
 
-                  <mat-form-field appearance="outline" style="font-size: 10px;">
+                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                     <mat-label>Update Subject</mat-label>
                     <mat-select
                       (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)"
@@ -178,7 +237,24 @@
                         {{subject.code}}
                       </mat-option>
                     </mat-select>
+                  </mat-form-field> -->
+
+                  <mat-form-field appearance="outline">
+                    <mat-label> Select Subject</mat-label>
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <button matSuffix mat-icon-button aria-label="Clear">
+                      <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+
+                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                      (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)">
+                      <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
+                        {{subject.code}}
+                      </mat-option>
+                    </mat-autocomplete>
                   </mat-form-field>
+
+
                 </div>
 
 
@@ -188,7 +264,7 @@
                       {{lesson.schoolStaff?.firstName}} {{lesson.schoolStaff?.lastName}}
                     </span>
 
-                    <mat-form-field appearance="outline" style="font-size: 10px;">
+                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                       <mat-label>Select Teacher</mat-label>
                       <mat-select
                         (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)"
@@ -197,6 +273,21 @@
                           {{staff.firstName}} {{staff.lastName}}
                         </mat-option>
                       </mat-select>
+                    </mat-form-field> -->
+
+                    <mat-form-field appearance="outline">
+                      <mat-label> Select Teacher</mat-label>
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <button matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                      </button>
+
+                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                        (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)">
+                        <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
+                          {{staff.firstName}} {{staff.lastName}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </mat-form-field>
 
                   </div>
@@ -212,7 +303,7 @@
                   </span>
 
 
-                  <mat-form-field appearance="outline" style="font-size: 10px;">
+                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                     <mat-label>Update Subject</mat-label>
                     <mat-select
                       (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)"
@@ -221,7 +312,23 @@
                         {{subject.code}}
                       </mat-option>
                     </mat-select>
+                  </mat-form-field> -->
+
+                  <mat-form-field appearance="outline">
+                    <mat-label> Select Subject</mat-label>
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <button matSuffix mat-icon-button aria-label="Clear">
+                      <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+
+                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                      (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)">
+                      <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
+                        {{subject.code}}
+                      </mat-option>
+                    </mat-autocomplete>
                   </mat-form-field>
+
                 </div>
 
 
@@ -232,7 +339,7 @@
                     </span>
 
 
-                    <mat-form-field appearance="outline" style="font-size: 10px;">
+                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                       <mat-label>Select Teacher</mat-label>
                       <mat-select
                         (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)"
@@ -241,7 +348,23 @@
                           {{staff.firstName}} {{staff.lastName}}
                         </mat-option>
                       </mat-select>
+                    </mat-form-field> -->
+
+                    <mat-form-field appearance="outline">
+                      <mat-label> Select Teacher</mat-label>
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <button matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                      </button>
+
+                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                        (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)">
+                        <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
+                          {{staff.firstName}} {{staff.lastName}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </mat-form-field>
+
 
                   </div>
                 </div>
@@ -256,7 +379,7 @@
                   </span>
 
 
-                  <mat-form-field appearance="outline" style="font-size: 10px;">
+                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                     <mat-label>Update Subject</mat-label>
                     <mat-select
                       (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)"
@@ -265,7 +388,23 @@
                         {{subject.code}}
                       </mat-option>
                     </mat-select>
+                  </mat-form-field> -->
+
+                  <mat-form-field appearance="outline">
+                    <mat-label> Select Subject</mat-label>
+                    <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="subAuto">
+                    <button matSuffix mat-icon-button aria-label="Clear">
+                      <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+
+                    <mat-autocomplete #subAuto="matAutocomplete" [displayWith]="displaySubjectCode"
+                      (optionSelected)="onSubjectChange2($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)">
+                      <mat-option *ngFor="let subject of filteredSubjectOptions$ | async" [value]="subject">
+                        {{subject.code}}
+                      </mat-option>
+                    </mat-autocomplete>
                   </mat-form-field>
+
                 </div>
 
 
@@ -276,7 +415,7 @@
                     </span>
 
 
-                    <mat-form-field appearance="outline" style="font-size: 10px;">
+                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
                       <mat-label>Select Teacher</mat-label>
                       <mat-select
                         (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)"
@@ -285,6 +424,21 @@
                           {{staff.firstName}} {{staff.lastName}}
                         </mat-option>
                       </mat-select>
+                    </mat-form-field> -->
+
+                    <mat-form-field appearance="outline">
+                      <mat-label> Select Teacher</mat-label>
+                      <input type="text" matInput [formControl]="staffControl" [matAutocomplete]="staffAuto">
+                      <button matSuffix mat-icon-button aria-label="Clear">
+                        <mat-icon>arrow_drop_down</mat-icon>
+                      </button>
+
+                      <mat-autocomplete #staffAuto="matAutocomplete" [displayWith]="displayStaffName"
+                        (optionSelected)="onStaffChange2($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)">
+                        <mat-option *ngFor="let staff of filteredStaffOptions$ | async" [value]="staff">
+                          {{staff.firstName}} {{staff.lastName}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </mat-form-field>
 
                   </div>
