@@ -246,7 +246,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
   getLesson(startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass): NewDbTimetableLesson | undefined {
 
-    // console.log("getLesson " , startEndTimeRange , " " , dayOfWeek , " ",schoolClass);
+    console.log("getLesson " , " " , dayOfWeek);
 
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     // what makes a lesson unique
