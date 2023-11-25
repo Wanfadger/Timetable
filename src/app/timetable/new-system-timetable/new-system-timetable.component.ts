@@ -245,9 +245,16 @@ export class NewSystemTimetableComponent implements OnInit {
   }
 
   getLesson(startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass): NewDbTimetableLesson | undefined {
+
+    // console.log("getLesson " , startEndTimeRange , " " , dayOfWeek , " ",schoolClass);
+
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
-    return this.newTimetable.lessons
-      .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
+    // what makes a lesson unique
+    // time , class , days
+    const lesson:NewDbTimetableLesson|undefined = this.newTimetable.lessons
+    .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
+    // console.log('lesson ' , lesson)
+    return lesson
   }
 
   onSubjectChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
@@ -385,7 +392,7 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
   displayStaffName(staff: SchoolStaffWithSchool_DistrictDto): string {
-    return staff && staff.firstName ? staff.lastName : '';
+    return staff && staff.firstName && staff.lastName ? `${staff.firstName} ${staff.lastName}` : '';
   }
 
   displaySubjectCode(sub: DbTimetableSubject): string {
