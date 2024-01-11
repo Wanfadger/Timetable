@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -18,6 +19,7 @@ otpControl:FormControl = new FormControl("" , Validators.min(5))
 private _authService:AuthenticationService = inject(AuthenticationService)
 private _router:Router = inject(Router)
 private _location:Location = inject(Location)
+private toastrService: ToastrService = inject(ToastrService);
 
 isLoading:boolean = false
 
@@ -26,6 +28,7 @@ ngOnInit(): void {
     this._router.navigate(['']);
   }
 }
+
 
 
 verifyOpt(){
@@ -40,12 +43,14 @@ verifyOpt(){
       error:(errorRes:HttpErrorResponse) => {
         this.isLoading = false
         console.log(errorRes)
-        alert(errorRes.error.error.message)
-       // this.toastrService.warning(errorRes.error.error.message)
+        this.toastrService.warning(errorRes.error.error.message)
       },
       complete:() => _$.unsubscribe()
      })
 }
+
+
+
 
 
 resetOpt(){
@@ -55,14 +60,13 @@ resetOpt(){
    const _$:Subscription =   this._authService.resetOtp(email).subscribe({
       next:response =>{
         this.isLoading = false
-        alert(response.message)
+        this.toastrService.success(response.message)
         console.log(response)
       },
       error:(errorRes:HttpErrorResponse) => {
         this.isLoading = false
         console.log(errorRes)
-        alert(errorRes.error.error.message)
-        //this.toastrService.warning(errorRes.error.error.message)
+        this.toastrService.warning(errorRes.error.error.message)
       },
       complete:() => _$.unsubscribe()
      })

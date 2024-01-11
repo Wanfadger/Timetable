@@ -6,6 +6,8 @@
       <div class="text-lg">TeLa System</div>
     </div>
 
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading" class="my-1" ></mat-progress-bar>
+
     <form class="flex flex-col"  [formGroup]="formGroup" >
       <mat-form-field  appearance="fill">
         <mat-label>Email</mat-label>

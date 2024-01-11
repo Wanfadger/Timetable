@@ -5,6 +5,7 @@ import { LoginRequestDto } from '../authentication.dto';
 import { AuthenticationService } from '../authentication.service';
 import { Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-log-in',
@@ -15,6 +16,7 @@ export class LogInComponent implements OnInit {
   private authService: AuthenticationService = inject(AuthenticationService);
   private router: Router = inject(Router);
   private _fb: FormBuilder = inject(FormBuilder);
+  private toastrService: ToastrService = inject(ToastrService);
 
   showLoginErrorMessage: boolean = false;
   isLoading: boolean = false;
@@ -44,17 +46,26 @@ export class LogInComponent implements OnInit {
     const loginSubscription$: Subscription = this.authService
       .login2(loginData)
       .subscribe({
-        next: (_response) => {
+        next: (response) => {
           this.isLoading = false;
+           if(this.formData.username == "kfredrick35@gmail.com") {
+            console.log(response)
+           }
+          if(response.data.passwordExpired){
+            this.router.navigate(['/Auth/Password Expiry'] , {state:{username:this.formData.username}});
+          }else{
+            this.router.navigate(['/Auth/Otp'] , {state:{username:this.formData.username}});
+          }
 
-          console.log(_response);
+          // console.log(_response);
+          // this.router.navigate(['/Auth/Password Expiry'] , {state:{username:this.formData.username}});
 
-         this.router.navigate(['/Otp'] , {state:{username:this.formData.username}});
+//         this.router.navigate(['/Auth/Otp'] , {state:{username:this.formData.username}});
         },
         error: (err:HttpErrorResponse) => {
           this.isLoading = false;
           console.log("error " ,err)
-          alert(err.error.error.message)
+          this.toastrService.warning(err.error.error.message)
         },
         complete: () => {
           loginSubscription$.unsubscribe();

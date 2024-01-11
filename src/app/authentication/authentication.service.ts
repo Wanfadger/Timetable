@@ -60,8 +60,8 @@ export class AuthenticationService {
     );
   }
 
-  login2(dto:LoginRequestDto): Observable<string> {
-    return this.http.post<string>(`${environment.BASE_URL}/auth/login2`, dto)
+  login2(dto:LoginRequestDto): Observable<ResponseDto<{passwordExpired:boolean , message:string}>> {
+    return this.http.post<ResponseDto<{passwordExpired:boolean , message:string}>>(`${environment.BASE_URL}/auth/login2`, dto)
     .pipe(retry(3) ,
     catchError(error => {
       localStorage.clear();

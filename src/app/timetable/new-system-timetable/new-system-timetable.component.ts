@@ -1,21 +1,18 @@
 
-import { DbTimetableLesson, DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson, SchoolStaffWithSchool_DistrictDto, TEST_LESSONS } from 'src/app/timetable/school-filter/school-filter.service';
+import { DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson, SchoolStaffWithSchool_DistrictDto } from 'src/app/timetable/school-filter/school-filter.service';
 import { DbTimetableClass } from './../school-filter/school-filter.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FilteredSchoolDetails } from '../school-filter/school-filter.component';
 import { NewDbTimetable, SchoolFilterService } from '../school-filter/school-filter.service';
-import { LocalTime, DayOfWeek, Duration, Period } from '@js-joda/core';
+import { LocalTime, DayOfWeek } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
-import { MatSelectChange } from '@angular/material/select';
 import { ClassStartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
-import { partition, includes } from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
-import { MissingBreakLunchTimeDialogComponent } from '../missing-break-lunch-time-dialog/missing-break-lunch-time-dialog.component';
 import { BehaviorSubject, Observable, Subscription, map, of, startWith } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
@@ -27,9 +24,6 @@ export class NewSystemTimetableComponent implements OnInit {
 
 
   filteredSchoolDetails: FilteredSchoolDetails | null = null
-  // startTimeControl: FormControl = new FormControl(LocalTime.of(8, 0).format(TelaTimetablePattern));
-  // endTimeControl: FormControl = new FormControl(LocalTime.of(17, 0).format(TelaTimetablePattern));
-  // durationControl: FormControl = new FormControl(null);
   DayOfWeek = DayOfWeek
   classStartEndBreakLunchTime !: ClassStartEndBreakLunchTime
   isStartEndBreakLunchTimeInValid: boolean = true
@@ -103,7 +97,6 @@ export class NewSystemTimetableComponent implements OnInit {
     this.newTimetable.lessons = []
     this.subjectControl.patchValue(null)
     this.staffControl.patchValue(null)
-    // console.log(this.newTimetable)
     this.startEndTimeRanges = this.generateTimetablePeriods2(this.classStartEndBreakLunchTime)
   }
 
@@ -159,49 +152,6 @@ export class NewSystemTimetableComponent implements OnInit {
   }
 
 
-  // onStaffChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
-  //   const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
-  //   let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons.
-  //     find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
-  //   const staff: DbTimetableStaff = $event.value
-
-  //   if (lesson) {
-  //     // update
-  //     lesson.schoolStaff = staff
-  //   } else {
-  //     // create
-  //     lesson = {
-  //       id: null,
-  //       startTime: startTimeStr,
-  //       endTime: startEndTimeRange.endTime.format(TelaTimetablePattern),
-  //       lessonDay: dayOfWeek.name(),
-  //       schoolClass: schoolClass,
-  //       subject: null,
-  //       schoolStaff: staff,
-  //       duration: this.classStartEndBreakLunchTime.duration,
-  //       breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
-  //       breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
-  //       lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
-  //       lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
-  //       classStartTime: this.classStartEndBreakLunchTime.classStartTime,
-  //       classEndTime: this.classStartEndBreakLunchTime.classEndTime,
-  //     }
-  //     // this.newTimetable.lessons.push(lesson)
-  //     this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
-  //       if (a.startTime < b.startTime) {
-  //         return -1;
-  //       } else if (a.startTime > b.startTime) {
-  //         return 1
-  //       } else {
-  //         return 0;
-  //       }
-  //     })
-  //   }
-
-  //   console.log(this.newTimetable.lessons)
-
-  // }
-
   onStaffChange2(event: MatAutocompleteSelectedEvent, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
     let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons.
@@ -247,54 +197,11 @@ export class NewSystemTimetableComponent implements OnInit {
 
   getLesson(startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass): NewDbTimetableLesson | undefined {
     const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
-    // what makes a lesson unique
-    // time , class , days
     return this.newTimetable.lessons
     .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
 
   }
 
-  // onSubjectChange($event: MatSelectChange, startEndTimeRange: TimeRange, dayOfWeek: DayOfWeek, schoolClass: DbTimetableClass) {
-  //   const startTimeStr = startEndTimeRange.startTime.format(TelaTimetablePattern)
-  //   let lesson: NewDbTimetableLesson | undefined = this.newTimetable.lessons
-  //     .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
-  //   const subject: DbTimetableSubject = $event.value
-
-  //   if (lesson) {
-  //     // update
-  //     lesson.subject = subject
-  //   } else {
-  //     // create
-  //     lesson = {
-  //       id: null,
-  //       startTime: startTimeStr,
-  //       endTime: startEndTimeRange.endTime.format(TelaTimetablePattern),
-  //       lessonDay: dayOfWeek.name(),
-  //       schoolClass: schoolClass,
-  //       subject: subject,
-  //       schoolStaff: null,
-  //       duration: this.classStartEndBreakLunchTime.duration,
-  //       breakStartTime: this.classStartEndBreakLunchTime.breakStartTime,
-  //       breakEndTime: this.classStartEndBreakLunchTime.breakEndTime,
-  //       lunchStartTime: this.classStartEndBreakLunchTime.lunchStartTime,
-  //       lunchEndTime: this.classStartEndBreakLunchTime.lunchEndTime,
-  //       classStartTime: this.classStartEndBreakLunchTime.classStartTime,
-  //       classEndTime: this.classStartEndBreakLunchTime.classEndTime,
-  //     }
-  //     // this.newTimetable.lessons.push(lesson)
-  //     this.newTimetable.lessons = [... this.newTimetable.lessons, lesson].sort((a: NewDbTimetableLesson, b: NewDbTimetableLesson) => {
-  //       if (a.startTime < b.startTime) {
-  //         return -1;
-  //       } else if (a.startTime > b.startTime) {
-  //         return 1
-  //       } else {
-  //         return 0;
-  //       }
-  //     })
-  //   }
-
-  //   console.log(this.newTimetable.lessons)
-  // }
 
   showAllSubjects() {
     this.filteredSubjectOptions$ = of(this.filteredSchoolDetails?.subjects||[])
@@ -306,14 +213,6 @@ export class NewSystemTimetableComponent implements OnInit {
       .find(nl => (nl.startTime == startTimeStr) && (nl.schoolClass?.id == schoolClass.id) && (nl.lessonDay?.toLocaleLowerCase() == dayOfWeek.name().toLocaleLowerCase()))
 
       const subject: DbTimetableSubject = $event.option.value
-
-
-      // console.log('day ' , dayOfWeek)
-      // console.log('startEndTimeRange ' , startEndTimeRange)
-      // console.log('selected ' , subject)
-      // console.log('lesson ' , lesson)
-
-
 
     if (lesson) {
       // update
@@ -350,10 +249,6 @@ export class NewSystemTimetableComponent implements OnInit {
 
     // console.log('timetable ' , this.newTimetable.lessons)
   }
-
-
-
-
 
   saveUpdateClassTimetable() {
     // this.newTimetable.lessons = TEST_LESSONS
