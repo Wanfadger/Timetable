@@ -21,6 +21,7 @@ export class LogInComponent implements OnInit {
   showLoginErrorMessage: boolean = false;
   isLoading: boolean = false;
   formGroup!: FormGroup;
+  showCPasswordText:boolean = false
 
 
   ngOnInit(): void {
@@ -52,9 +53,9 @@ export class LogInComponent implements OnInit {
             console.log(response)
            }
           if(response.data.passwordExpired){
-            this.router.navigate(['/Auth/Password Expiry'] , {state:{username:this.formData.username}});
+            this.toastrService.warning("Your password has expired")
           }else{
-            this.router.navigate(['/Auth/Otp'] , {state:{username:this.formData.username}});
+            this.router.navigate(['/Otp'] , {state:{username:this.formData.username}});
           }
 
           // console.log(_response);

@@ -35,7 +35,7 @@ verifyOpt(){
   const dto:{username:string , code:number} = {username:(this._location.getState() as {username:string}).username , code:this.otpControl.value}
 
   this.isLoading = true
-   const _$:Subscription =   this._authService.verifyOtp(dto).subscribe({
+   const _$:Subscription =   this._authService.verifyLoginOtp(dto).subscribe({
       next:_response =>{
         this.isLoading = false
         this._router.navigate(['/Timetable']);

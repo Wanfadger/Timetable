@@ -69,13 +69,16 @@ export class AuthenticationService {
     }));
   }
 
-  verifyOtp(otp:{username:string , code:number}){
-    return this.http.post<LoginResponse>(`${environment.BASE_URL}/auth/verifyOtp`, otp)
+
+
+  verifyLoginOtp(otp:{username:string , code:number}){
+    return this.http.post<LoginResponse>(`${environment.BASE_URL}/auth/verifyLoginOtp`, otp)
     .pipe(retry(3),tap(response => {
       this.setToken(response.token)
     }) ,
-    exhaustMap( (_) => this.userManagementService.loggedUserProfile().pipe(tap(response => console.log("response "  ,response)),retry(3))),
+    exhaustMap( (_) => this.userManagementService.loggedUserProfile().pipe(retry(3))),
     map(response => {
+      // console.log("profile " , response)
       this.setLoggedUserProfile(response.data)
       return ({token:"string",message: "success fully logged in",response: true})
     }),
