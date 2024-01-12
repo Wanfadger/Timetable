@@ -1,6 +1,6 @@
 import { HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { DayOfWeek } from '@js-joda/core';
 import { Dictionary, chain, groupBy, uniq } from 'lodash';
