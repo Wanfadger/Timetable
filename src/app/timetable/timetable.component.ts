@@ -10,7 +10,7 @@ import {
 import { FilteredSchoolDetails } from './school-filter/school-filter.component';
 import { Dictionary, groupBy } from 'lodash';
 import { SchoolStaffWithSchool_DistrictDto } from './school-filter/school-filter.service';
-import { MatSelectChange } from '@angular/material/select';
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
