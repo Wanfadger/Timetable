@@ -1,19 +1,18 @@
 
-import { DbTimetableStaff, DbTimetableSubject, NewDbTimetableLesson, SchoolStaffWithSchool_DistrictDto } from 'src/app/timetable/school-filter/school-filter.service';
-import { DbTimetableClass } from './../school-filter/school-filter.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { FilteredSchoolDetails } from '../school-filter/school-filter.component';
-import { NewDbTimetable, SchoolFilterService } from '../school-filter/school-filter.service';
 import { LocalTime, DayOfWeek } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/shared/TelaDateTimePattern';
 import { ClassStartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { BehaviorSubject, Observable, Subscription, map, of, startWith } from 'rxjs';
 import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
 import { FormControl } from '@angular/forms';
 import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete';
+import { MatDialog } from '@angular/material/dialog';
+import { SchoolStaffWithSchool_DistrictDto, SchoolFilterService } from 'src/shared/school-filter/school-filter.service';
+import { NewDbTimetable, DbTimetableSubject, DbTimetableClass, NewDbTimetableLesson, DbTimetableStaff, TimeRange } from '../timetable.dto';
+import { FilteredSchoolDetails } from 'src/shared/school-filter/school-filter.component';
 
 @Component({
   selector: 'app-new-system-timetable',
@@ -23,7 +22,7 @@ import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } fr
 export class NewSystemTimetableComponent implements OnInit {
 
 
-  filteredSchoolDetails: FilteredSchoolDetails | null = null
+ filteredSchoolDetails !: FilteredSchoolDetails 
   DayOfWeek = DayOfWeek
   classStartEndBreakLunchTime !: ClassStartEndBreakLunchTime
   isStartEndBreakLunchTimeInValid: boolean = true
@@ -302,11 +301,4 @@ export class NewSystemTimetableComponent implements OnInit {
 
 }
 
-export interface TimeRange {
-  startTime: LocalTime
-  endTime: LocalTime
-}
 
-export interface User {
-  name: string;
-}

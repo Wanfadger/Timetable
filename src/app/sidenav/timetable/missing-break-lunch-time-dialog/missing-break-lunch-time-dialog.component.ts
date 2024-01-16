@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { TimeRange } from '../new-system-timetable/new-system-timetable.component';
 import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalTime } from '@js-joda/core';
 import { TelaTimetablePattern } from 'src/shared/TelaDateTimePattern';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { TimeRange } from '../timetable.dto';
 
 @Component({
   selector: 'app-missing-break-lunch-time-dialog',

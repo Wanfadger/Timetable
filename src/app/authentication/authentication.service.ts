@@ -6,8 +6,7 @@ import { environment } from 'src/environments/environment';
 import { LoginRequestDto, LoginResponse } from './authentication.dto';
 import { UserManagementService } from '../usermanagement/user-management.service';
 import { LoggedUserProfileDto } from '../usermanagement/user-management-dto';
-import { ResponseDto } from '../timetable/school-filter/school-filter.service';
-
+import { ResponseDto } from 'src/shared/school-filter/school-filter.service';
 
 
 

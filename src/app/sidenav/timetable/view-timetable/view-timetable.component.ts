@@ -3,11 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { DayOfWeek } from '@js-joda/core';
-import { Dictionary, chain, groupBy, uniq } from 'lodash';
+import { chain } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { FilteredSchoolDetails } from 'src/app/timetable/school-filter/school-filter.component';
-import { DbTimetable, DbTimetableClass, DbTimetableLesson, DbTimetableStaff, DbTimetableSubject, SchoolFilterService } from 'src/app/timetable/school-filter/school-filter.service';
+import { SchoolFilterService } from 'src/shared/school-filter/school-filter.service';
+import { DbTimetable, DbTimetableLesson, DbTimetableStaff, DbTimetableSubject } from '../timetable.dto';
+import { FilteredSchoolDetails } from 'src/shared/school-filter/school-filter.component';
 
 @Component({
   selector: 'app-view-timetable',
@@ -23,7 +24,7 @@ export class ViewTimetableComponent implements OnInit {
    isEdit:boolean = false;
    isUpdating:boolean = false
 
-    filteredSchoolDetails: FilteredSchoolDetails | null = null
+    filteredSchoolDetails !: FilteredSchoolDetails
     constructor(private router:Router , private toastr:ToastrService , private schoolFilterService:SchoolFilterService) { }
 
     ngOnInit(): void {

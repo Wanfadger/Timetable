@@ -1,0 +1,27 @@
+<div class="flex flex-col   shadow-lg">
+  <div class="flex justify-between">
+    <div class="flex flex-col">
+      <div><span class="p-2 font-light">Academic Year:</span> <span class="p-1">{{(filteredSchoolDetails.year?.name || 'Select Year') | titlecase}}</span> </div>
+      <div><span class="p-2 font-light">Academic Term:</span> <span class="p-1">{{(filteredSchoolDetails.term?.term || 'Select Term') | titlecase}}</span> </div>
+      <div><span class="p-2 font-light">School Level :</span> <span class="p-1">{{(filteredSchoolDetails.schoolLevel || 'Select School Level') | titlecase}}</span>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <div><span class="p-2 font-light">Region: </span> <span class="p-1">{{(filteredSchoolDetails.region?.name || 'Select Region') | titlecase}}</span> </div>
+      <div><span class="p-2 font-light">LocalGovernment: </span> <span class="p-1">{{(filteredSchoolDetails.localGovernment?.name || 'Select LocalGovernment') | titlecase}}</span></div>
+      <div><span class="p-2 font-light">School:</span> <span class="p-1">{{(filteredSchoolDetails.school?.name || 'Select School') | titlecase}}</span></div>
+    </div>
+  </div>
+
+  <div class="flex justify-between">
+    <div class="space-x-8">
+      <span class="text-xl p-1">Total Staff: {{(filteredSchoolDetails.staffList.length || 0)}}</span>
+      <span (click)="showStaffList()"><mat-icon class="mat-18">visibility</mat-icon></span>
+
+      <span class="text-xl p-1">Total Classes: {{(filteredSchoolDetails.schoolClasses.length || 0)}}</span>
+      <span (click)="showSchoolClasses()" (click)="showSchoolClasses()"><mat-icon
+          class="mat-18">visibility</mat-icon></span>
+    </div>
+  </div>
+</div>

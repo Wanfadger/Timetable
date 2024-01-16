@@ -1,6 +1,9 @@
-<section id="section1" class="flex mt-1 justify-center items-center ">
-  <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
+<section id="section1" class="flex mt-1 justify-center items-center gap-6">
+  <div><app-school-filter  (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event" ></app-school-filter></div>
+
+  <div><app-filter-school-details [filteredSchoolDetails]="filteredSchoolDetails" ></app-filter-school-details></div>
 </section>
+
 
 <section id="table">
 
@@ -15,12 +18,11 @@
 
             <div>
               <button type="button" mat-raised-button color="primary"
-                [disabled]="this.filteredSchoolDetails?.schoolClasses?.length == 0 || isStartEndBreakLunchTimeInValid || isSaving"
+                [disabled]="this.filteredSchoolDetails.schoolClasses.length == 0 || isStartEndBreakLunchTimeInValid || isSaving"
                 (click)="generateTimetable()">Generate</button>
             </div>
           </div>
 
-          <!-- actions  ||newTimetable.lessons.length < (startEndTimeRanges.length * 5)-->
           <div class="items-center">
             <div class="flex space-x-6 justify-end mr-8">
 
@@ -29,11 +31,6 @@
                 [matTooltip]="'save timetableClass timetable changes'" (click)="saveUpdateClassTimetable()">
                 <mat-icon>check</mat-icon>
               </button>
-
-              <!-- <button mat-icon-button color="primary" [disabled]="isSaving"
-                [matTooltip]="'edit timetableClass timetable'">
-                <mat-icon>edit</mat-icon>
-              </button> -->
 
               <button mat-icon-button color="primary" [disabled]="isSaving"
                 [matTooltip]="'export timetableClass timetable'">
@@ -79,18 +76,6 @@
                     {{lesson.subject?.code}}
                   </span>
 
-
-                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                    <mat-label>Update Subject</mat-label>
-                    <mat-select
-                      (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)"
-                      [value]="getLesson(startEndTimeRange , DayOfWeek.MONDAY , schoolClass)?.subject">
-                      <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject">
-                        {{subject.code}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field> -->
-
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
                     <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="monSubAuto">
@@ -114,18 +99,6 @@
                     <span *ngIf="getLesson(startEndTimeRange , DayOfWeek.MONDAY , schoolClass) as lesson">
                       {{lesson.schoolStaff?.firstName}} {{lesson.schoolStaff?.lastName}}
                     </span>
-
-
-                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                      <mat-label>Select Teacher</mat-label>
-                      <mat-select
-                        (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.MONDAY , schoolClass)"
-                        [value]="getLesson(startEndTimeRange , DayOfWeek.MONDAY , schoolClass)?.schoolStaff">
-                        <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
-                          {{staff.firstName}} {{staff.lastName}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field> -->
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
@@ -154,17 +127,6 @@
                     {{lesson.subject?.code}}
                   </span>
 
-
-                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                    <mat-label>Update Subject</mat-label>
-                    <mat-select
-                      (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)"
-                      [value]="getLesson(startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)?.subject">
-                      <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject">
-                        {{subject.code}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field> -->
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
                     <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="tueSubAuto">
@@ -187,18 +149,6 @@
                     <span *ngIf="getLesson(startEndTimeRange , DayOfWeek.TUESDAY , schoolClass) as lesson">
                       {{lesson.schoolStaff?.firstName}} {{lesson.schoolStaff?.lastName}}
                     </span>
-
-
-                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                      <mat-label>Select Teacher</mat-label>
-                      <mat-select
-                        (selectionChange)="onStaffChange($event  , startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)"
-                        [value]="getLesson(startEndTimeRange , DayOfWeek.TUESDAY , schoolClass)?.schoolStaff">
-                        <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
-                          {{staff.firstName}} {{staff.lastName}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field> -->
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
@@ -227,18 +177,6 @@
                     {{lesson.subject?.code}}
                   </span>
 
-
-                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                    <mat-label>Update Subject</mat-label>
-                    <mat-select
-                      (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)"
-                      [value]="getLesson(startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)?.subject">
-                      <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject">
-                        {{subject.code}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field> -->
-
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
                     <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="wedSubAuto">
@@ -263,17 +201,6 @@
                     <span *ngIf="getLesson(startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass) as lesson">
                       {{lesson.schoolStaff?.firstName}} {{lesson.schoolStaff?.lastName}}
                     </span>
-
-                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                      <mat-label>Select Teacher</mat-label>
-                      <mat-select
-                        (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)"
-                        [value]="getLesson(startEndTimeRange , DayOfWeek.WEDNESDAY , schoolClass)?.schoolStaff">
-                        <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
-                          {{staff.firstName}} {{staff.lastName}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field> -->
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
@@ -303,17 +230,6 @@
                   </span>
 
 
-                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                    <mat-label>Update Subject</mat-label>
-                    <mat-select
-                      (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)"
-                      [value]="getLesson(startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)?.subject">
-                      <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject">
-                        {{subject.code}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field> -->
-
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
                     <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="thurSubAuto">
@@ -338,17 +254,6 @@
                       {{lesson.schoolStaff?.firstName}} {{lesson.schoolStaff?.lastName}}
                     </span>
 
-
-                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                      <mat-label>Select Teacher</mat-label>
-                      <mat-select
-                        (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)"
-                        [value]="getLesson(startEndTimeRange , DayOfWeek.THURSDAY , schoolClass)?.schoolStaff">
-                        <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
-                          {{staff.firstName}} {{staff.lastName}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field> -->
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>
@@ -378,18 +283,6 @@
                     {{lesson.subject?.code}}
                   </span>
 
-
-                  <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                    <mat-label>Update Subject</mat-label>
-                    <mat-select
-                      (selectionChange)="onSubjectChange($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)"
-                      [value]="getLesson(startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)?.subject">
-                      <mat-option *ngFor="let subject of this.filteredSchoolDetails?.subjects||[]" [value]="subject">
-                        {{subject.code}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field> -->
-
                   <mat-form-field appearance="outline">
                     <mat-label> Select Subject</mat-label>
                     <input type="text" matInput [formControl]="subjectControl" [matAutocomplete]="friSubAuto">
@@ -413,18 +306,6 @@
                     <span *ngIf="getLesson(startEndTimeRange , DayOfWeek.FRIDAY , schoolClass) as lesson">
                       {{lesson.schoolStaff?.firstName}} {{lesson.schoolStaff?.lastName}}
                     </span>
-
-
-                    <!-- <mat-form-field appearance="outline" style="font-size: 10px;">
-                      <mat-label>Select Teacher</mat-label>
-                      <mat-select
-                        (selectionChange)="onStaffChange($event , startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)"
-                        [value]="getLesson(startEndTimeRange , DayOfWeek.FRIDAY , schoolClass)?.schoolStaff">
-                        <mat-option *ngFor="let staff of this.filteredSchoolDetails?.staffList||[]" [value]="staff">
-                          {{staff.firstName}} {{staff.lastName}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field> -->
 
                     <mat-form-field appearance="outline">
                       <mat-label> Select Teacher</mat-label>

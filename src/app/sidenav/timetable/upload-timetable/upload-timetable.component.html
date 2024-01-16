@@ -1,5 +1,7 @@
-<section id="section1" class="flex  justify-center items-center">
-  <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
+<section id="section1" class="flex mt-1 justify-center items-center gap-6">
+  <div><app-school-filter  (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event" ></app-school-filter></div>
+
+  <div><app-filter-school-details [filteredSchoolDetails]="filteredSchoolDetails" ></app-filter-school-details></div>
 </section>
 
 <div class="flex justify-center items-center mt-1 space-x-4 p-2">
@@ -14,8 +16,8 @@ appTimetableExcelUploader
 
 
     <button mat-raised-button [disabled]="isUploading ||
-     !filteredSchoolDetails?.region || !filteredSchoolDetails?.localGovernment || !filteredSchoolDetails?.year || !filteredSchoolDetails?.term
-    || !filteredSchoolDetails?.school || !filteredSchoolDetails?.schoolLevel" (click)="uploadField.click()"
+     !filteredSchoolDetails.region || !filteredSchoolDetails.localGovernment || !filteredSchoolDetails.year || !filteredSchoolDetails.term
+    || !filteredSchoolDetails.school || !filteredSchoolDetails.schoolLevel" (click)="uploadField.click()"
       cdkFocusInitial color="primary" matTooltip="select file to upload">
       <mat-icon>upload_file</mat-icon>
       Upload Timetable
@@ -23,10 +25,10 @@ appTimetableExcelUploader
   </div>
 
   <a mat-raised-button [disabled]="isUploading ||
-  !filteredSchoolDetails?.region || !filteredSchoolDetails?.localGovernment || !filteredSchoolDetails?.year || !filteredSchoolDetails?.term
-  || !filteredSchoolDetails?.school || !filteredSchoolDetails?.schoolLevel"
+  !filteredSchoolDetails.region || !filteredSchoolDetails.localGovernment || !filteredSchoolDetails.year || !filteredSchoolDetails.term
+  || !filteredSchoolDetails.school || !filteredSchoolDetails.schoolLevel"
     href="../../assets/School Timetable Template.xlsx" color="primary"
-    [download]="filteredSchoolDetails?.school?.name+' Timetable '+filteredSchoolDetails?.term?.term+' '+filteredSchoolDetails?.year?.name+'.xlsx'"
+    [download]="filteredSchoolDetails.school?.name+' Timetable '+filteredSchoolDetails.term?.term+' '+filteredSchoolDetails.year?.name+'.xlsx'"
     matTooltip="Supported formats are csv and excel">
     <mat-icon>download</mat-icon>
     Download Timetable Template

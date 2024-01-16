@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, retry } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ResponseDto } from '../timetable/school-filter/school-filter.service';
 import { LoggedUserProfileDto } from './user-management-dto';
+import { ResponseDto } from 'src/shared/school-filter/school-filter.service';
 
 
 @Injectable({

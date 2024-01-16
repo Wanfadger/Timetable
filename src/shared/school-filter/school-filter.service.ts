@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, retry, Subject } from 'rxjs';
+import { AcademicYear, AcademicTerm, SchoolSubject, SchoolTimeTable } from 'src/app/dto/dto';
+import { DbTimetableLesson, DbTimetable, NewDbTimetable } from 'src/app/sidenav/timetable/timetable.dto';
 import { environment } from 'src/environments/environment';
-import { AcademicTerm, AcademicYear, SchoolSubject, SchoolTimeTable } from '../../dto/dto';
 
 @Injectable({
   providedIn: 'root'
@@ -135,66 +136,6 @@ export interface SchoolStaffWithSchool_DistrictDto{
   serviceStatus:string
 }
 
-export interface DbTimetable{
-  id:string
-  breakTime:string
-  lunchTime:string
-  lessons:DbTimetableLesson[]
-}
-
-export interface NewDbTimetable{
-  school:{id:string},
-  academicTerm:{id:string},
-  lessons:NewDbTimetableLesson[]
-}
-
-
-export interface NewDbTimetableLesson{
-  id:string|null,
-  startTime:string, //lesson
-  endTime:string, // lesson
-  lessonDay:string|null,
-  duration:number;
-  breakStartTime:string
-  breakEndTime:string
-  lunchStartTime:string
-  lunchEndTime:string
-  classStartTime:string
-  classEndTime:string
-  schoolClass:DbTimetableClass|null,
-  subject:DbTimetableSubject|null,
-  schoolStaff:DbTimetableStaff|null
-}
-
-
-export interface DbTimetableLesson{
-  id:string,
-  startTime:string,
-  endTime:string,
-  lessonDay:string,
-  duration:number;
-  breakStartTime:string
-  breakEndTime:string
-  lunchStartTime:string
-  lunchEndTime:string
-  classStartTime:string
-  classEndTime:string
-  schoolClass:DbTimetableClass,
-  subject:DbTimetableSubject,
-  schoolStaff:DbTimetableStaff
-}
-
-export interface DbTimetableStaff{
-  id:string , firstName:string, lastName:string
-}
-
-export interface DbTimetableSubject{
-  id:string ,code:string, name:string
-}
-
-export interface DbTimetableClass{
-  id:string , name:string
-}
 
 
 export const  TEST_LESSONS = [

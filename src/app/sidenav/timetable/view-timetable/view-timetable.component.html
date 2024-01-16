@@ -1,5 +1,7 @@
-<section id="section1" class="flex mt-1 justify-center items-center ">
-  <app-school-filter (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event"></app-school-filter>
+<section id="section1" class="flex mt-1 justify-center items-center gap-6">
+  <div><app-school-filter  (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event" ></app-school-filter></div>
+
+  <div><app-filter-school-details [filteredSchoolDetails]="filteredSchoolDetails" ></app-filter-school-details></div>
 </section>
 
 <div class="flex justify-center" *ngIf="filteredSchoolDetails as boolean">
@@ -67,7 +69,7 @@
           </button> -->
 
             <button mat-icon-button color="primary" [matTooltip]="'export '+timetableClass.name+' timetable'"
-              appConvertHtmlToPdf [filename]="filteredSchoolDetails?.school?.name+' '+timetableClass.name+' timetable'" htmlContainerId="classPdf"
+              appConvertHtmlToPdf [filename]="filteredSchoolDetails.school?.name+' '+timetableClass.name+' timetable'" htmlContainerId="classPdf"
               [disabled]="isUpdating">
               <mat-icon>system_update_alt</mat-icon>
             </button>

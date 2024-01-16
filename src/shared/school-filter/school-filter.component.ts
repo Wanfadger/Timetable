@@ -3,9 +3,9 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { District, Region, School, SchoolFilterService, SchoolStaffWithSchool_DistrictDto } from './school-filter.service';
 import { FormControl, Validators } from '@angular/forms';
 import { Observable, Subject, debounceTime, distinctUntilChanged, map, of, startWith, switchMap } from 'rxjs';
-import { AcademicTerm, AcademicYear, SchoolClass, SchoolStaff, SchoolSubject } from '../../dto/dto';
 import { HttpParams } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
+import { AcademicTerm, AcademicYear, SchoolClass, SchoolSubject } from 'src/app/dto/dto';
 
 
 @Component({
@@ -332,21 +332,9 @@ export class SchoolFilterComponent implements OnInit {
 
   }
 
-  showStaffList() {
-    if (this.filteredSchoolDetails?.staffList) {
-      this.toastr.info(`${this.filteredSchoolDetails?.school?.name} staff list
-      ${this.filteredSchoolDetails?.staffList.map((staff, index) => `${index + 1} ${staff.firstName} ${staff.lastName}`).join("\n")}`)
 
-      console.log(this.filteredSchoolDetails?.staffList.map((staff, index) => `${index + 1} ${staff.firstName} ${staff.lastName}`))
-    }
-  }
 
-  showSchoolClasses() {
-    if (this.filteredSchoolDetails?.schoolClasses) {
-      this.toastr.info(`${this.filteredSchoolDetails?.school?.name} staff list
-      ${this.filteredSchoolDetails?.schoolClasses.map((scchoolClass, index) => `${index + 1} ${scchoolClass.name}`).join("\n")}`)
-    }
-  }
+
 
   getAllSubjects() {
     this.schoolFilterService.getAllSubjects(new HttpParams()).subscribe({

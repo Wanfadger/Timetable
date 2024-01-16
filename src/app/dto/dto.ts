@@ -1,4 +1,4 @@
-import { SchoolStaffWithSchool_DistrictDto } from "../timetable/school-filter/school-filter.service"
+import { SchoolStaffWithSchool_DistrictDto } from "src/shared/school-filter/school-filter.service"
 
 
 export interface AcademicYear {
