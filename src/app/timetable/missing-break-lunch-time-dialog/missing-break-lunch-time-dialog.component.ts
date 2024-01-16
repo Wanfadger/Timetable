@@ -3,7 +3,7 @@ import { TimeRange } from '../new-system-timetable/new-system-timetable.componen
 import { FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LocalTime } from '@js-joda/core';
-import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
+import { TelaTimetablePattern } from 'src/shared/TelaDateTimePattern';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 

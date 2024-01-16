@@ -38,7 +38,7 @@ verifyOpt(){
    const _$:Subscription =   this._authService.verifyLoginOtp(dto).subscribe({
       next:_response =>{
         this.isLoading = false
-        this._router.navigate(['/Timetable']);
+        this._router.navigate(['/Management']);
       },
       error:(errorRes:HttpErrorResponse) => {
         this.isLoading = false

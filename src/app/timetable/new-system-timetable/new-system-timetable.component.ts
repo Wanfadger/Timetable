@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { FilteredSchoolDetails } from '../school-filter/school-filter.component';
 import { NewDbTimetable, SchoolFilterService } from '../school-filter/school-filter.service';
 import { LocalTime, DayOfWeek } from '@js-joda/core';
-import { TelaTimetablePattern } from 'src/app/shared/TelaDateTimePattern';
+import { TelaTimetablePattern } from 'src/shared/TelaDateTimePattern';
 import { ClassStartEndBreakLunchTime } from '../start-end-break-lunch-time/start-end-break-lunch-time.component';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { BehaviorSubject, Observable, Subscription, map, of, startWith } from 'rxjs';

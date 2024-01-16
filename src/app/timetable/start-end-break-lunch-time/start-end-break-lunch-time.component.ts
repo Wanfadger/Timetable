@@ -1,4 +1,4 @@
-import { TelaTimetablePattern } from './../../shared/TelaDateTimePattern';
+import { TelaTimetablePattern } from '../../../shared/TelaDateTimePattern';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TimeRange } from '../new-system-timetable/new-system-timetable.component';
