@@ -1,0 +1,38 @@
+<mat-toolbar>
+  <span>{{isEdit() ? 'Edit '+data?.name : 'Add Public Holiday'}}</span>
+</mat-toolbar>
+
+<mat-progress-bar mode="indeterminate" *ngIf="loading()" class="mt-2"></mat-progress-bar>
+
+<!-- <div class="flex  justify-center my-4">
+
+</div> -->
+
+<form class="flex flex-col  gap-4 p-4 " [formGroup]="formGroup">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name">
+    <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+    <mat-hint>holiday name</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Date</mat-label>
+    <input matInput formControlName="date" [matDatepicker]="dp3" [disabled]="true" >
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="dp3"></mat-datepicker-toggle>
+    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description"></textarea>
+  </mat-form-field>
+
+
+  <button mat-raised-button color="primary" class="items-center" matTooltip="Add new public holiday" (click)="submit()"
+    [disabled]="formGroup.invalid || loading()">
+    <mat-icon>add</mat-icon>
+    submit
+  </button>
+</form>

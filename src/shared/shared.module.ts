@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { NgmaterialModule } from './ngmaterial.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SchoolFilterComponent } from './school-filter/school-filter.component';
-import { FilterSchoolDetailsComponent } from '../app/sidenav/timetable/filter-school-details/filter-school-details.component';
+import { ConfirmComponent } from './confirm/confirm.component';
 
 
 
 @NgModule({
-  declarations: [SchoolFilterComponent],
+  declarations: [SchoolFilterComponent , ConfirmComponent],
   imports: [
     CommonModule,NgmaterialModule, ReactiveFormsModule
   ],

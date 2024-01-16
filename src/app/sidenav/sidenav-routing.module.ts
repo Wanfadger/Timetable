@@ -1,3 +1,4 @@
+import { PublicHolidaysComponent } from './calendar/public-holidays/public-holidays.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidenavComponent } from './sidenav.component';
@@ -22,6 +23,7 @@ const routes: Routes = [
 
     {path:"NewCalendar" , component: NewCalendarComponent},
     {path:"ViewCalendar" , component:ViewCalendarComponent},
+    {path:"PublicHolidays" , component:PublicHolidaysComponent},
   ]},
 ];
 

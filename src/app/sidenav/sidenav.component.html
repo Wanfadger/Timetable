@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
     [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Menu</mat-toolbar>
+    <mat-toolbar>Tela Protoypes</mat-toolbar>
 
     <mat-accordion>
       <mat-expansion-panel>
@@ -27,6 +27,7 @@
         <mat-list>
           <a mat-list-item [routerLink]="['/Management/NewCalendar']" routerLinkActive="router-link-active">New</a>
           <a mat-list-item [routerLink]="['/Management/ViewCalendar']" routerLinkActive="router-link-active">View</a>
+          <a mat-list-item [routerLink]="['/Management/PublicHolidays']" routerLinkActive="router-link-active">PublicHolidays</a>
          </mat-list>
 
       </mat-expansion-panel>
@@ -43,7 +44,10 @@
       <span>shool-timetable-generator-prototype</span>
     </mat-toolbar>
     <!-- Add Content Here -->
-    <router-outlet></router-outlet>
+
+    <div class="px-2 p2-1">
+      <router-outlet></router-outlet>
+    </div>
 
   </mat-sidenav-content>
 </mat-sidenav-container>
