@@ -1,8 +1,10 @@
 import { DateTimeFormatter, LocalDate, TemporalAdjusters, DayOfWeek, Month } from '@js-joda/core';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Dictionary, groupBy } from 'lodash';
 import { AcademicTerm } from 'src/app/dto/dto';
 import { FilteredCalendarDetails } from '../calendar-filter/calendar-filter.component';
+import { CalendarService } from '../calendar.service';
+import { PublicHoliday } from '../calendat.dto';
 
 @Component({
   selector: 'app-view-calendar',
@@ -12,6 +14,7 @@ import { FilteredCalendarDetails } from '../calendar-filter/calendar-filter.comp
 export class ViewCalendarComponent implements OnInit {
 
   currentTerm: AcademicTerm | null = null
+  calendarService:CalendarService = inject(CalendarService)
 
   daysOfWeek: DayOfWeek[] = DayOfWeek.values().filter(d => !(d.equals(DayOfWeek.SUNDAY) || d.equals(DayOfWeek.SATURDAY)))
   LOCAL_DATE_Formatter = DateTimeFormatter.ofPattern("d")
@@ -20,6 +23,8 @@ export class ViewCalendarComponent implements OnInit {
   termDates = signal<LocalDate[]>([])
   datesByMonth = signal<Dictionary<LocalDate[]>>({})
   datesByDayOfWeek = signal<Dictionary<LocalDate[]>>({})
+  holidays = signal<PublicHoliday[]>([])
+
 
   onSelectedCalendarDetailEvent(filteredSchoolDetails: FilteredCalendarDetails) {
 
@@ -36,11 +41,13 @@ export class ViewCalendarComponent implements OnInit {
       this.datesByMonth.update(() => this.groupByMonth(termMonthlyDates))
       this.termMonth.update(() => Object.keys(this.datesByMonth()))
 
+
+
     }
   }
 
   ngOnInit(): void {
-
+   this.getHolidays()
   }
 
   datesBetweenBothInclusive(startDate: LocalDate, endDate: LocalDate) {
@@ -74,8 +81,22 @@ export class ViewCalendarComponent implements OnInit {
     return dates;
   }
 
+  getMonthHolidays(month:string):LocalDate[] {
+    return  this.holidays().filter(d => d.date.month().name() == month).map(d => d.date)
+   }
+
+   isMonthHolidays(monthDate:LocalDate , monthHolidays:LocalDate[]):boolean {
+    return monthHolidays.find(mh => mh.equals(monthDate)) ? true : false
+   }
 
 
+  getHolidays() {
+    this.calendarService.getPublicHolidays().subscribe(holidays => {
+     this.holidays.update(() => holidays)
+
+    // console.log("holidays " , this.getMonthHolidays(LocalDate.now().month().name()))
+    })
+   }
 
   groupByDayOfWeek(dates: LocalDate[]): Dictionary<LocalDate[]> {
     return groupBy(dates, (date) => date.dayOfWeek().name())

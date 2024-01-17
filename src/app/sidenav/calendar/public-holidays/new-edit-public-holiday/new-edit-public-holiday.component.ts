@@ -62,7 +62,7 @@ export class NewEditPublicHolidayComponent implements OnInit {
       disableClose: true, data: "Are you sure to add this holiday?",
     }).afterClosed().subscribe(result => {
       if (result) {
-        this.calendarService.add(holiday as PublicHoliday)
+        this.calendarService.addPublicHoliday(holiday as PublicHoliday)
         this.toastrService.success("deleted")
         this.dialogRef.close(true)
       }

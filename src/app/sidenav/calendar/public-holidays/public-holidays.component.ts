@@ -73,7 +73,7 @@ export class PublicHolidaysComponent implements OnInit, AfterViewInit {
     this.dialog.open(ConfirmComponent, {disableClose: true, data:holiday ,  height: '50%',width: '40%',
   }).afterClosed().subscribe(result => {
     if (result) {
-      this.calendarService.delete(holiday.name)
+      this.calendarService.deletePublicHoliday(holiday.name)
       this.toastrService.success("deleted")
     }
   })
@@ -81,7 +81,7 @@ export class PublicHolidaysComponent implements OnInit, AfterViewInit {
 
 
   getHolidays() {
-   this.calendarService.get().subscribe(holidays => {
+   this.calendarService.getPublicHolidays().subscribe(holidays => {
     this.dataSource.data = holidays
    })
   }
