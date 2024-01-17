@@ -1,3 +1,43 @@
 <div class="flex justify-center gap-6 mt-2">
-  <app-school-filter  (SelectedSchoolDetailEvent)="filteredSchoolDetails = $event" ></app-school-filter>
+  <app-calendar-filter (SelectedCalendarDetailEvent)="onSelectedCalendarDetailEvent($event)" ></app-calendar-filter>
 </div>
+
+<div *ngIf="currentTerm" class="flex justify-center gap-6 mb-4">
+  <div>Starts On <span >{{currentTerm.startDate}}</span></div>
+  <div>End On <span>{{currentTerm.endDate}}</span></div>
+  <div>Days <span>{{termDates().length}}</span></div>
+</div>
+
+
+<section class="flex justify-center flex-wrap gap-4">
+  <div class="flex flex-col w-[49%] shadow-md" *ngFor="let month of termMonth()">
+    <div class="flex items-center justify-center gap-4">
+      <button mat-icon-button disabled="true">
+        <mat-icon class="mat-18">navigate_before</mat-icon>
+      </button>
+
+      <div><strong>{{month}}</strong> ({{datesByMonth()[month].length}} days)</div>
+
+      <button mat-icon-button disabled="true">
+        <mat-icon class="mat-18">navigate_next</mat-icon>
+      </button>
+    </div>
+
+    <div class="flex  w-full justify-evenly ">
+      <div *ngFor="let day of daysOfWeek" class="">
+        <div class="mb-4 border-solid border-2 border-slate-300 p-2"><strong>{{day.name()}}</strong></div>
+
+        <div *ngFor="let date of groupByDayOfWeek(datesByMonth()[month])[day.name()]"
+          class="p-2 text-center cursor-pointer hover:shadow-md hover:bg-slate-100 hover:rounded-full">
+          {{date.format(LOCAL_DATE_Formatter)}}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+

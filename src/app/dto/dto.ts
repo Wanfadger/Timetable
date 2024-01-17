@@ -11,7 +11,7 @@ export interface AcademicYear {
   endDate: string
 }
 
-export interface AcademicTerm {id: string , term: string}
+export interface AcademicTerm {id: string , term: string,startDate?: string, endDate?: string}
 export interface School {id: string,name: string,schoolLevel: string,schoolClasses?: SchoolClass[]}
 export interface SchoolClass {id: string,name: string,academicTerm?: AcademicTerm}
 

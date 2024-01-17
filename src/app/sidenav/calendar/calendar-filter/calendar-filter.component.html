@@ -1,0 +1,33 @@
+<div class="text-center text-2xl">Select Academic Term</div>
+
+<form class="flex  gap-2">
+  <mat-form-field appearance="fill">
+    <mat-label>Select Academic Year</mat-label>
+    <mat-progress-bar mode="determinate" color="primary" *ngIf="isLoadingYears"></mat-progress-bar>
+    <input type="text" placeholder="Select Academic Year" matInput [formControl]="yearControl"
+      [matAutocomplete]="autoYear">
+    <mat-icon matSuffix>arrow_drop_down</mat-icon>
+
+    <mat-autocomplete autoActiveFirstOption #autoYear="matAutocomplete" [displayWith]="displayWith">
+      <mat-option *ngFor="let year of filteredYears$  | async" [value]="year">
+        {{year.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+
+  <mat-form-field appearance="fill">
+    <mat-label>Select Academic Term</mat-label>
+    <mat-progress-bar mode="determinate" color="primary" *ngIf="isLoadingTerms"></mat-progress-bar>
+    <input type="text" placeholder="Select Academic Term" matInput [formControl]="termControl"
+      [matAutocomplete]="autoTerm">
+    <mat-icon matSuffix>arrow_drop_down</mat-icon>
+
+    <mat-autocomplete autoActiveFirstOption #autoTerm="matAutocomplete" [displayWith]="displayWithTerm">
+      <mat-option *ngFor="let term of filteredTerms$  | async" [value]="term">
+        {{term.term}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+</form>

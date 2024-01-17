@@ -8,6 +8,7 @@ import { PublicHolidaysComponent } from './public-holidays/public-holidays.compo
 import { ReactiveFormsModule } from '@angular/forms';
 import { NewEditPublicHolidayComponent } from './public-holidays/new-edit-public-holiday/new-edit-public-holiday.component';
 import { ConfirmComponent } from 'src/shared/confirm/confirm.component';
+import { CalendarFilterComponent } from './calendar-filter/calendar-filter.component';
 
 
 
@@ -17,6 +18,7 @@ import { ConfirmComponent } from 'src/shared/confirm/confirm.component';
     ViewCalendarComponent,
     PublicHolidaysComponent,
     NewEditPublicHolidayComponent,
+    CalendarFilterComponent,
     
   ],
   imports: [

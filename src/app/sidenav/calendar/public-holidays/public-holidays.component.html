@@ -1,6 +1,6 @@
 
 
-<div class="flex justify-between">
+<div class="flex justify-between mt-2">
   <mat-form-field class="w-1/4">
     <mat-label>Search</mat-label>
     <input matInput (keyup)="applyFilter($event)"  #input>
@@ -52,8 +52,13 @@
          <ng-container matColumnDef="action">
           <th mat-header-cell cdkDrag *matHeaderCellDef mat-sort-header sortActionDescription="Sort by action"> Action </th>
           <td mat-cell *matCellDef="let data" class="flex p-2 gap-4">
-            <button mat-flat-button class="mx-1" color="primary" (click)="edit(data)" [disabled]="loading()" >Edit</button>
-            <button mat-flat-button class="mx-1" color="primary" (click)="delete(data)" [disabled]="loading()" >Delete</button>
+            <button mat-icon-button color="primary" (click)="edit(data)" [disabled]="loading()" matTooltip="edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button mat-icon-button color="warn" (click)="edit(data)" [disabled]="loading()" matTooltip="delete">
+              <mat-icon>delete</mat-icon>
+            </button>
           </td>
         </ng-container>
 
