@@ -28,7 +28,7 @@
         <div class="mb-4 border-solid border-2 border-slate-300 p-2"><strong>{{day.name()}}</strong></div>
 
         <div *ngFor="let date of groupByDayOfWeek(datesByMonth()[month])[day.name()]"
-          class="p-2 text-center cursor-pointer hover:shadow-md hover:bg-slate-100 hover:rounded-full"
+          class="p-2 text-center cursor-pointer hover:shadow-md hover:bg-slate-100 hover:rounded-full hover:text-xl"
           [ngClass]="isMonthHolidays(date , getMonthHolidays(month)) ? 'rounded-full bg-green-600 text-white hover:bg-green-600': ''">
           <span>{{date.format(LOCAL_DATE_Formatter)}}</span>
         </div>
@@ -40,6 +40,6 @@
 
 
 <div *ngIf="currentTerm" class="mt-8 p-2 flex items-center gap-4 ">
-  <span class="text-center p-2 w-16 h-8 bg-green-600 text-white cursor-pointer rounded-lg">d</span>
+  <span class="text-center p-2 w-16 h-8 bg-green-600 text-white cursor-pointer rounded-3xl">d</span>
   <span>Public Holidays</span>
 </div>
