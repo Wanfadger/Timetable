@@ -1,0 +1,15 @@
+.calenda {
+  width: 50%;
+  //   height: 100%;
+}
+.public-holiday .mat-calendar-body-cell-content {
+  background-color: #ffeb3b !important; /* Use !important cautiously */
+}
+
+.custom-tooltip {
+  position: fixed;
+  padding: 8px;
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+}
